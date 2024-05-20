@@ -1,4 +1,8 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { joinVoiceChannel, createAudioResource, createAudioPlayer } = require('@discordjs/voice');
+const { SlashCommandBuilder } = require('discord.js');
+const path = require('node:path');
+const { SoundModule } = require('../../modules/');
+const soundModule = new SoundModule();
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -30,37 +34,39 @@ module.exports = {
       subCommand
         .setName("volume")
         .setDescription("Altera o volume da música")
-        // .addIntegerOption((option) => {
-        //   option
-        //    .setName('value')
-        //    .setRequired(true)
-        //    .setDescription('Altere o Volume entre 0 e 100')
-        // })
-        
-        // .addIntegerOption(option => {
-        //   option
-        //   .setName('value')
-        //   .setRequired(true)
-        //   .setDescription('Altere o Volume entre 0 e 100')
-        // })
-
-        // .addIntegerOption(option =>
-        //   option
-        //     .setName('volume')
-        //     .setDescription('Digite um valor entre 0-100')
-        //     .min_value(0)
-        //     .max_value(100)
-        //     .setRequired(true)
-        //   )
+        .addIntegerOption(option =>
+          option.setName('volume')
+            .setDescription('Altere o Volume entre 0 e 100')
+            .setRequired(true)
+            .setMinValue(0)
+            .setMaxValue(100)
+        ),
+    )
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName("playaudio")
+        .setDescription("Toda um áudio da lista de áudios do BOT")
+        .addStringOption(option => 
+          option.setName('filename')
+          .setDescription('nome do arquivo de áudio sem extensão')
+          .setRequired(true))
     ),
-  execute: async (client, interaction) => {
+  execute: async (_client, interaction) => {
     try {
       const { member, guild, options } = interaction;
-      const memberData = guild.members.cache.get(member.user.id);
-      // console.log(memberData);
+      // const memberData = guild.members.cache.get(member.user.id);
+      const channelId = member.voice.channel.id;
+      const guildId = interaction.guildId;
+
+      let resource = createAudioResource('');
+
+      if (!channelId) return interaction.reply('Você precisa estar em um canal de voz para usar este comando.');
+
+      const connectionParams = { channelId, guildId, adapterCreator: interaction.guild.voiceAdapterCreator };
+
+      // const connection = joinVoiceChannel(connectionParams);
 
       const subCommand = options.getSubcommand();
-      // console.log(subCommand);
 
       switch (subCommand) {
         case 'play':
@@ -68,7 +74,8 @@ module.exports = {
           break;
 
         case 'stop':
-          interaction.reply('Comando executado com sucesso', { ephemeral: true });
+          await soundModule.stopSound();
+          await interaction.reply('Som parado com Sucesso', { ephemeral: true });
           break;
 
         case 'next':
@@ -76,15 +83,27 @@ module.exports = {
           break;
 
         case 'volume':
+          // const volume = options.getInteger('volume');
+          // soundModule.changeVolume(Number(volume));
+          // interaction.reply(`Volume alterado para ${volume}`, { ephemeral: true });
+          interaction.reply(`Comando Desabilitado temporariamente`, { ephemeral: true });
+          break;
+
+        case 'playaudio':
+          const filename = options.getString('filename');
+          const stream = `src/audios/${filename}.mp3`;
+
+          soundModule.playSound(stream, connectionParams)
+
           interaction.reply('Comando executado com sucesso', { ephemeral: true });
           break;
-        
+
         default:
           break;
       }
 
     } catch (error) {
-      console.error(error);
+      console.error(`[Erro] Music.js: ${error}`);
     }
   },
 };

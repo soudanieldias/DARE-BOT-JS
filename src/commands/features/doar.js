@@ -1,5 +1,5 @@
 const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js');
 const discordTTS = require('discord-tts');
 
 module.exports = {
@@ -8,6 +8,10 @@ module.exports = {
     .setDescription('Doe para ajudar a DARE.'),
 	execute: async (_client, interaction) => {
     try {
+      const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
+    
+      if (!hasAdminRole) return interaction.reply('Erro: Não Autorizado!!!');
+
       const embed = new EmbedBuilder()
       .setColor(0x0099FF)
       .setTitle('Doação PIX/PicPay')

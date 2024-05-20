@@ -2,18 +2,23 @@ const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@d
 
 module.exports = class SoundModule {
   player = createAudioPlayer();
+  connection;
   
-  playSound = async (streamSource, connectionParams) => {
-    
-
-    const connection = joinVoiceChannel(connectionParams);
-
-    const resource = createAudioResource(streamSource);
-
-    connection.subscribe(this.player);
-
-    resource.volume?.setVolume(100);
-
-    return this.player.play(resource);
+  playSound = async (stream, connectionParams) => {
+    this.connection = joinVoiceChannel(connectionParams);
+    this.resource = createAudioResource(stream, { inlineVolume: false });
+    await this.connection.subscribe(this.player);
+    // this.resource.volume?.setVolume(5);
+    return this.player.play(this.resource);
   };
+
+  stopSound = async () => {
+    this.player.stop();
+    this.connection.destroy();
+  }
+
+  changeVolume = async (volume) => {
+    this.resource.volume?.setVolume(volume);
+  }
+
 }

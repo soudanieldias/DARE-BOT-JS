@@ -1,5 +1,5 @@
 const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
-const { SlashCommandBuilder} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const discordTTS = require('discord-tts');
 
 module.exports = {
@@ -7,6 +7,9 @@ module.exports = {
     .setName('informacoes')
     .setDescription('Reproduz as informações do servidor no canal de voz'),
 	execute: async (_client, interaction) => {
+    const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
+  
+    if (!hasAdminRole) return interaction.reply('Erro: Não Autorizado!!!');
 
     let player = new AudioPlayer();
 
