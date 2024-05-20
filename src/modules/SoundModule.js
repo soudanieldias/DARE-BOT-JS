@@ -20,5 +20,4 @@ module.exports = class SoundModule {
   changeVolume = async (volume) => {
     this.resource.volume?.setVolume(volume);
   }
-
 }
