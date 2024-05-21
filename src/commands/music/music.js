@@ -44,11 +44,11 @@ module.exports = {
     )
     .addSubcommand((subCommand) =>
       subCommand
-        .setName("playaudio")
-        .setDescription("Toda um áudio da lista de áudios do BOT")
+        .setName("playfile")
+        .setDescription("Toda um áudio da internet (mp3, mp4, webm, ogg)")
         .addStringOption(option => 
-          option.setName('filename')
-          .setDescription('nome do arquivo de áudio sem extensão')
+          option.setName('source')
+          .setDescription('Link/Source do arquivo (mp3, mp4, webm, ogg)')
           .setRequired(true))
     ),
   execute: async (_client, interaction) => {
@@ -89,11 +89,9 @@ module.exports = {
           interaction.reply(`Comando Desabilitado temporariamente`, { ephemeral: true });
           break;
 
-        case 'playaudio':
-          const filename = options.getString('filename');
-          const stream = `src/audios/${filename}`; //.mp3`;
-
-          soundModule.playSound(stream, connectionParams)
+        case 'playfile':
+          const source = options.getString('source');
+          soundModule.playSound(source, connectionParams)
 
           await interaction.reply('Comando executado com sucesso', { ephemeral: true });
           break;
