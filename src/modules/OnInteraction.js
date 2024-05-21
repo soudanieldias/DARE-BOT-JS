@@ -1,7 +1,19 @@
+const SoundModule = require("./SoundModule");
+
 module.exports = (client, slashCommands) => {
 client.on('interactionCreate', async (interaction) => {
     try {
-      if (interaction.isButton()) return;
+      const { message, commandName, user } = interaction;
+
+      const soundModule = new SoundModule();
+
+      if (interaction.isButton()) {
+        if(message.content.includes('Lista de Áudios: ')) {
+          const soundpad = slashCommands.get('soundpad');
+          if(!soundpad) return interaction.reply('ERRO: Ocorreu um erro com o SoundPad!');
+          await soundpad.execute(client, interaction);
+        }
+      }
 
       if (interaction.isModalSubmit()) return;
 
