@@ -21,7 +21,7 @@ module.exports = {
           .setRequired(true))
     ),
   category: 'music',
-  execute: async (client, interaction) => {
+  execute: async (_client, interaction) => {
     try {
       const { member, guild, options, customId } = interaction;
       const channelId = member.voice.channel.id;
@@ -30,9 +30,9 @@ module.exports = {
       let stream = '';
       const connectionParams = { channelId, guildId, adapterCreator: interaction.guild.voiceAdapterCreator };
 
-      if (!channelId) return interaction.reply('Você precisa estar em um canal de voz para usar este comando.');
+      if (!channelId) return interaction.reply('Erro: Você precisa estar em um canal de voz.');
 
-      const subCommand = interaction.isButton() ? 'interaction' : options.getSubCommand();
+      const subCommand = interaction.isButton() ? 'interaction': options.getSubcommand();
 
       switch (subCommand) {
         case 'play':
@@ -55,6 +55,8 @@ module.exports = {
           soundModule.playSound(stream, connectionParams)
           await interaction.reply(`${customId}`);
           await interaction.deleteReply();
+          break;
+        default:
           break;
       }
     } catch (error) {
