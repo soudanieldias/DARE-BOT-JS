@@ -91,11 +91,11 @@ module.exports = {
 
         case 'playaudio':
           const filename = options.getString('filename');
-          const stream = `src/audios/${filename}.mp3`;
+          const stream = `src/audios/${filename}`; //.mp3`;
 
           soundModule.playSound(stream, connectionParams)
 
-          interaction.reply('Comando executado com sucesso', { ephemeral: true });
+          await interaction.reply('Comando executado com sucesso', { ephemeral: true });
           break;
 
         default:
