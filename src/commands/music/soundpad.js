@@ -41,7 +41,8 @@ module.exports = {
           soundModule.playSound(stream, connectionParams);
           interaction.reply(`Tocando som: ${filename}`);
           break;
-        case 'list':
+
+          case 'list':
           const buttonModule = new ButtonModule();
           const generatedButtons = await buttonModule.generateButtons();
           const slicedButtons = await buttonModule.sliceButtonArray(generatedButtons, 5);
@@ -50,12 +51,14 @@ module.exports = {
             await interaction.channel.send({ content: `Lista de Áudios: ${index + 1}`, components: [rowData]})
           }); 
           break;
-        case 'interaction':
+
+          case 'interaction':
           stream = `src/audios/soundpad/${customId}.mp3`;
           soundModule.playSound(stream, connectionParams)
           await interaction.reply(`${customId}`);
           await interaction.deleteReply();
           break;
+
         default:
           break;
       }

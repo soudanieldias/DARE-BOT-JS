@@ -9,7 +9,13 @@ module.exports = class SoundModule {
     this.resource = createAudioResource(stream, { inlineVolume: false });
     await this.connection.subscribe(this.player);
     // this.resource.volume?.setVolume(5);
-    return this.player.play(this.resource);
+
+    // this.player.on('stateChange', (oldState, newState) => {
+    //   if (newState.status === 'idle') this.connection.destroy();
+    // });
+
+    return await this.player.play(this.resource);
+
   };
 
   stopSound = async () => {

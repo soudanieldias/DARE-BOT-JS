@@ -3,9 +3,7 @@ const SoundModule = require("./SoundModule");
 module.exports = (client, slashCommands) => {
 client.on('interactionCreate', async (interaction) => {
     try {
-      const { message, commandName, user } = interaction;
-
-      const soundModule = new SoundModule();
+      const { message } = interaction;
 
       if (interaction.isButton()) {
         if(message.content.includes('Lista de Áudios: ')) {
@@ -17,8 +15,6 @@ client.on('interactionCreate', async (interaction) => {
 
       if (interaction.isModalSubmit()) return;
 
-      // if (interaction.isChatInputCommand()) return;
-
       if (interaction.isChatInputCommand()) {
         const command = slashCommands.get(interaction.commandName);
 
@@ -28,7 +24,7 @@ client.on('interactionCreate', async (interaction) => {
           );
         }
 
-        return command.execute(client, interaction);
+        return command.execute(client, interaction, slashCommands);
       }
 
     } catch (err) {
