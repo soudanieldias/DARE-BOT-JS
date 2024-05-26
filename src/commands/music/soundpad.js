@@ -1,5 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, SlashCommandBuilder } = require('@discordjs/builders');
-const { Client, Interaction, TextChannel } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { SoundModule, ButtonModule } = require('../../modules/');
 
 module.exports = {
@@ -25,24 +24,27 @@ module.exports = {
     try {
       const { member, guild, options, customId } = interaction;
       const channelId = member.voice.channel.id;
-      const guildId = interaction.guildId;
+
+      if (!channelId) return interaction.reply('Erro: Você precisa estar em um canal de voz.');
+
+      const guildId = guild.id;
       const soundModule = new SoundModule();
       let stream = '';
       const connectionParams = { channelId, guildId, adapterCreator: interaction.guild.voiceAdapterCreator };
 
-      if (!channelId) return interaction.reply('Erro: Você precisa estar em um canal de voz.');
 
       const subCommand = interaction.isButton() ? 'interaction': options.getSubcommand();
 
       switch (subCommand) {
-        case 'play':
+        case 'play': {
           const filename = options.getString('filename');
           stream = `src/audios/soundpad/${filename}.mp3`;
           soundModule.playSound(stream, connectionParams);
           interaction.reply(`Tocando som: ${filename}`);
           break;
+        }
 
-          case 'list':
+        case 'list': {
           const buttonModule = new ButtonModule();
           const generatedButtons = await buttonModule.generateButtons();
           const slicedButtons = await buttonModule.sliceButtonArray(generatedButtons, 5);
@@ -51,16 +53,19 @@ module.exports = {
             await interaction.channel.send({ content: `Lista de Áudios: ${index + 1}`, components: [rowData]})
           }); 
           break;
+        }
 
-          case 'interaction':
+        case 'interaction': {
           stream = `src/audios/soundpad/${customId}.mp3`;
           soundModule.playSound(stream, connectionParams)
           await interaction.reply(`${customId}`);
           await interaction.deleteReply();
           break;
+        }
 
-        default:
+        default: {
           break;
+        }
       }
     } catch (error) {
       console.error(`[Erro]: ${error}`);
