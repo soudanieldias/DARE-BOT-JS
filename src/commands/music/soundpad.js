@@ -23,9 +23,12 @@ module.exports = {
   execute: async (_client, interaction) => {
     try {
       const { member, guild, options, customId } = interaction;
-      const channelId = member.voice.channel.id;
+      const channelId = member?.voice.channel?.id;
 
-      if (!channelId) return interaction.reply('Erro: Você precisa estar em um canal de voz.');
+      if (!channelId) {
+        await interaction.reply(`Erro: <@!${member.id}> Entre em um canal de voz.`);
+        return interaction.deleteReply();
+      }
 
       const guildId = guild.id;
       const soundModule = new SoundModule();
