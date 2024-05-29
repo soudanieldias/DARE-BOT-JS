@@ -1,5 +1,5 @@
-const { Model, DataTypes } = require("sequelize");
-const { sequelize } = require("./index");
+const { Model, DataTypes } = require('sequelize');
+const { sequelize } = require('./index');
 
 class settings extends Model {}
 
@@ -30,7 +30,7 @@ settings.init(
   },
   {
     sequelize,
-    modelName: "settings",
+    modelName: 'settings',
   }
 );
 

@@ -1,6 +1,4 @@
-const Logger = require('simple-node-logger');
-
-Logger.createSimpleLogger('logs/bot.log');
+const Logger = require('simple-node-logger').createSimpleLogger('bot.log');
 
 module.exports = {
   Logger,
