@@ -1,4 +1,4 @@
-const { ActivityType, Status } = require('discord.js');
+const { ActivityType } = require('discord.js');
 const config = require('../config.json');
 
 module.exports = class SetActivity {

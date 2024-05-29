@@ -11,7 +11,8 @@ module.exports = async (client, token) => {
       |  ${client.guilds.cache.map((guild) => guild.name).join('\n      |  ')}
       ------------------------------
     `);
+    await client.database.databaseHandler(client);
   });
 
-  client.login(token);
+  await client.login(token);
 }

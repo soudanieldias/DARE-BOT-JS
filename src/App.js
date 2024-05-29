@@ -3,6 +3,7 @@ const { Client, Collection } = require('discord.js');
 const dotenv = require('dotenv');
 
 const {
+  DBModule,
   partialsList,
   intentsList,
   OnReady,
@@ -24,8 +25,9 @@ class App {
   slashCommands = new Collection();
 
   constructor() {
-    OnInteraction(this.client, this.slashCommands);
     SetActivity.default(this.client);
+    OnInteraction(this.client, this.slashCommands);
+    this.client.database = new DBModule(this.client);
   }
   
   start() {
