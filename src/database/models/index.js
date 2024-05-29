@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // const settings = require('./settings.js');
 
 const Sequelize = require('sequelize');
