@@ -2,11 +2,11 @@ const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("say")
-    .setDescription("Transmite uma mensagem para o canal informado")
+    .setName('say')
+    .setDescription('Transmite uma mensagem para o canal informado')
     .addChannelOption(channel => (
-      channel.setName("channel")
-      .setDescription("Canal onde deseja enviar a Mensagem")
+      channel.setName('channel')
+      .setDescription('Canal onde deseja enviar a Mensagem')
       .setRequired(true)
     ))
     .addStringOption(message => (
@@ -15,6 +15,10 @@ module.exports = {
       .setRequired(true)
     )),
   category: 'staff',
+  /**
+   *
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
 	async execute (_client, interaction) {
     try {
       const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator]);
@@ -30,7 +34,7 @@ module.exports = {
       return interaction.reply({ content: 'Mensagem enviada com Sucesso!', ephemeral: true });
 
     } catch (error) {
-      console.error("[SAY] Error: ", error);
+      console.error('[SAY] Error: ', error);
     }
   }
 };

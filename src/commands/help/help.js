@@ -1,11 +1,16 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('@discordjs/builders');
-const App = require('../../App');
 
 module.exports = {
 	data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('Lista os comandos disponíveis no BOT'),
 	category: 'help',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {Array<{ data: SlashCommandBuilder, execute: Function }>} slashCommands
+   */
 	execute: async (client, interaction, slashCommands) => {
 		if (!client.user) return;
 		

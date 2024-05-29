@@ -11,7 +11,12 @@ module.exports = {
       .setDescription('Mensagem que será falada no canal de Voz')
       .setRequired(true)
     )),
-	category: 'voice',
+    category: 'features',
+    /**
+     *
+     * @param {import('discord.js').Client} client
+     * @param {import('discord.js').ChatInputCommandInteraction} interaction
+     */
 	execute: async (_client, interaction) => {
 
     let player = new AudioPlayer();

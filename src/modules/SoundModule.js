@@ -3,12 +3,13 @@ const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@d
 module.exports = class SoundModule {
   player = createAudioPlayer();
   connection;
+  resource;
   
   playSound = async (stream, connectionParams) => {
     this.connection = joinVoiceChannel(connectionParams);
-    this.resource = createAudioResource(stream, { inlineVolume: false });
+    this.resource = createAudioResource(stream, { inlineVolume: true });
     await this.connection.subscribe(this.player);
-    // this.resource.volume?.setVolume(5);
+    this.resource.volume?.setVolume(1);
 
     // this.player.on('stateChange', (oldState, newState) => {
     //   if (newState.status === 'idle') this.connection.destroy();

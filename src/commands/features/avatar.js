@@ -9,6 +9,13 @@ module.exports = {
       option.setName('user')
         .setDescription('O usuário cujo avatar você quer ver')
         .setRequired(false)),
+  category: 'features',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+	 * @param {Array<{ data: SlashCommandBuilder, execute: Function }>} slashCommands
+   */
   async execute(_client, interaction) {
     // Pegue o usuário fornecido ou o próprio usuário se nenhum for fornecido
     const user = interaction.options.getUser('user') || interaction.user;

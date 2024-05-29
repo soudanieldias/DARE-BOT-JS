@@ -5,6 +5,11 @@ module.exports = {
     .setName('serverinfo')
     .setDescription('Mostra um Embed com as informações sobre o Servidor/Guild'),
 	category: 'help',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
 	execute: async (client, interaction) => {
     try {
       const guildMembers = await interaction.guild?.members.fetch();

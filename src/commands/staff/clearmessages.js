@@ -1,5 +1,4 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const fs = require('fs');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,7 +12,12 @@ module.exports = {
       .setRequired(true)
     )),
   category: 'staff',
-	async execute (_client, interaction) {
+  /**
+   *
+   * @param {import("discord.js").Client} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   */
+	async execute (client, interaction) {
     try {
       const { options } = interaction;
 

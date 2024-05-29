@@ -49,6 +49,12 @@ module.exports = {
             .setRequired(true)
         )
     ),
+  category: 'music',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
   execute: async (_client, interaction) => {
     try {
       const { member, options } = interaction;
@@ -70,43 +76,43 @@ module.exports = {
       const subCommand = options.getSubcommand();
 
       switch (subCommand) {
-        case 'play':
+        case 'play': {
           interaction.reply('Comando executado com sucesso', {
             ephemeral: true,
           });
           break;
-
-        case 'stop':
+        }
+        case 'stop': {
           await soundModule.stopSound();
-          await interaction.reply('Som parado com Sucesso', {
+          await interaction.reply({
+            content: 'Som parado com Sucesso',
             ephemeral: true,
           });
           break;
-
-        case 'next':
-          interaction.reply('Comando executado com sucesso', {
+        }
+        case 'next': {
+          return interaction.reply({
+            content: 'Comando desabilitado temporariamente',
             ephemeral: true,
           });
-          break;
-
+        }
         case 'volume':
-          // const volume = options.getInteger('volume');
-          // soundModule.changeVolume(Number(volume));
-          // interaction.reply(`Volume alterado para ${volume}`, { ephemeral: true });
-          interaction.reply(`Comando Desabilitado temporariamente`, {
-            ephemeral: true,
-          });
+          { const volume = options.getInteger('volume');
+          soundModule.changeVolume(Number(volume));
+          interaction.reply(`Volume alterado para ${volume}`, { ephemeral: true });
+          // interaction.reply({ content: `Comando Desabilitado temporariamente`, ephemeral: true });
           break;
-
-        case 'playfile':
+        }
+        case 'playfile': {
           source = options.getString('source');
           soundModule.playSound(source, connectionParams);
 
-          await interaction.reply('Comando executado com sucesso', {
+          await interaction.reply({
+            content: 'Comando executado com sucesso',
             ephemeral: true,
           });
           break;
-
+        }
         default:
           break;
       }

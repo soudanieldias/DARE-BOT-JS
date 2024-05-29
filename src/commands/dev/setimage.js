@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+/* eslint-disable no-undef */
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,10 +11,17 @@ module.exports = {
         .setDescription('O avatar')
         .setRequired(true)
     ),
+    category: 'dev',
+    /**
+     *
+     * @param {import('discord.js').Client} client
+     * @param {import('discord.js').ChatInputCommandInteraction} interaction
+     */
   execute: async (client, interaction) => {
-    const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
+    // const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
+    const isDeveloper = interaction.member.id === process.env.DEV_ID;
     
-    if (!hasAdminRole) return interaction.reply('Erro: Não Autorizado!!!');
+    if (!isDeveloper) return interaction.reply('Erro: Não Autorizado!!!');
 
     const avatar = interaction.options.getAttachment('avatar');
 

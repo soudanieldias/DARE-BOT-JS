@@ -20,6 +20,11 @@ module.exports = {
           .setRequired(true))
     ),
   category: 'music',
+  /**
+   *
+   * @param {import("discord.js").Client} client
+   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   */
   execute: async (_client, interaction) => {
     try {
       const { member, guild, options, customId } = interaction;

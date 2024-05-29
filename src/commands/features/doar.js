@@ -1,11 +1,15 @@
-const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js');
-const discordTTS = require('discord-tts');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('doar')
     .setDescription('Doe para ajudar a DARE.'),
+  category: 'features',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
 	execute: async (_client, interaction) => {
     try {
       const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
@@ -19,7 +23,7 @@ module.exports = {
       .setImage('https://i.imgur.com/nr8sxiX.jpeg')
       .setTimestamp()
       .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/cAPoJDf.jpeg' });
-      await interaction.reply({ embeds: [] });
+      await interaction.reply({ embeds: [ embed ] });
 
     } catch (error) {
       console.error('[SERVER INFO]', error);

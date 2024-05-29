@@ -1,6 +1,5 @@
 const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
-const discordTTS = require('discord-tts');
 
 module.exports = {
   data: new SlashCommandBuilder()

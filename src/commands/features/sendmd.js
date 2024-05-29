@@ -1,6 +1,4 @@
-const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 const { SlashCommandBuilder} = require('discord.js');
-const discordTTS = require('discord-tts');
 const config = require('../../config.json');
 
 module.exports = {
@@ -11,7 +9,12 @@ module.exports = {
       option.setName('user')
       .setDescription('ID do usuário que irá receber a MD.')
       .setRequired(true)),
-
+  category: 'features',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
 	execute: async (client, interaction) => {
     try {
       const userId = interaction.options.getUser('user');
