@@ -1,5 +1,3 @@
-const SoundModule = require("./SoundModule");
-
 module.exports = (client, slashCommands) => {
 client.on('interactionCreate', async (interaction) => {
     try {

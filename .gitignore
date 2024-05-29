@@ -1,6 +1,7 @@
 node_modules/
 .vscode/
 
+*.log
 *.env
 *.mp3
 *.wav

@@ -1,0 +1,29 @@
+{
+  "development": {
+    "host": "",
+    "port": "3306",
+    "database": "",
+    "username": "",
+    "password": "",
+    "dialect": "mysql",
+    "logging": true
+  },
+  "test": {
+    "host": "",
+    "port": "3306",
+    "database": "",
+    "username": "",
+    "password": "",
+    "dialect": "mysql",
+    "logging": true
+  },
+  "production": {
+    "host": "",
+    "port": "3306",
+    "database": "",
+    "username": "",
+    "password": "",
+    "dialect": "mysql",
+    "logging": false
+  }
+}

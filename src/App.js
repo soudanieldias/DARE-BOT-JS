@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { Client, Collection } = require('discord.js');
 const dotenv = require('dotenv');
 

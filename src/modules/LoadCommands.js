@@ -1,6 +1,6 @@
+/* eslint-disable no-undef */
 const { globSync } = require('glob');
 const { REST, Routes } = require('discord.js');
-const App = require('../App.js');
 
 module.exports = async (client, slashCommands) => {
   
