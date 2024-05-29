@@ -3,9 +3,9 @@
 
 const Sequelize = require('sequelize');
 const process = require('process');
-const logger = require('../lib/logger');
+const logger = require('../../modules/Logger');
 const env = process.env.DB_ENV || 'development';
-const config = require(__dirname + './config.json')[env];
+const config = require('../config.json')[env];
 const db = {};
 
 let sequelize;
