@@ -7,6 +7,7 @@ const {
   partialsList,
   intentsList,
   OnReady,
+  LoadButtons,
   LoadCommands,
   OnInteraction,
   SetActivity,
@@ -23,6 +24,7 @@ class App {
   TOKEN = process.env.TOKEN;
 
   slashCommands = new Collection();
+  buttons = new Collection();
 
   constructor() {
     SetActivity.default(this.client);
@@ -33,6 +35,7 @@ class App {
   start() {
     OnReady(this.client, this.TOKEN);
     LoadCommands(this.client, this.slashCommands);
+    LoadButtons(this.client, this.buttons);
   }
 }
 
