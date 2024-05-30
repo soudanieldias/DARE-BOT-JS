@@ -1,7 +1,8 @@
-/* eslint-disable no-unused-vars */
-const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
-const { Settings } = require('../database/models');
-const DBModule = require('./DBModule');
+// /* eslint-disable no-unused-vars */
+// const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
+// const { Settings } = require('../database/models');
+// const DBModule = require('./DBModule');
+const TicketModule = require('./TicketModule');
 
 /**
  *
@@ -11,6 +12,8 @@ const DBModule = require('./DBModule');
  * @param {Array<{ data: SlashCommandBuilder, execute: Function }>} slashCommands
  */
 module.exports = (client, slashCommands) => {
+  const ticketModule = new TicketModule();
+
   client.on('interactionCreate', async (interaction) => {
     try {
       const { message } = interaction;
@@ -21,83 +24,28 @@ module.exports = (client, slashCommands) => {
           if (!soundpad)
             return interaction.reply('ERRO: Ocorreu um erro com o SoundPad!');
           return await soundpad.execute(client, interaction);
-        } else {
-          return;
+        }
+
+        if (interaction.customId == 'ticket-open') {
+          return await ticketModule.ticketOpen(client, interaction);
+        }
+        if (interaction.customId == 'ticket-close') {
+          return await ticketModule.ticketClose(client, interaction);
+        }
+        if (interaction.customId == 'ticket-reopen') {
+          return await ticketModule.ticketReopen(client, interaction);
+        }
+        if (interaction.customId == 'ticket-closemessage') {
+          return await ticketModule.ticketCloseMessage(client, interaction);
+        }
+        if (interaction.customId == 'ticket-transcript') {
+          return await ticketModule.ticketTranscript(client, interaction);
         }
       }
 
       if (interaction.isModalSubmit()) {
         if (interaction.customId == 'ticketmodal') {
-          const openTitle = interaction.fields.getTextInputValue('opentitle');
-          const openDescription =
-            interaction.fields.getTextInputValue('opendescription');
-          const ticketTitle =
-            interaction.fields.getTextInputValue('tickettitle');
-          const ticketDescription =
-            interaction.fields.getTextInputValue('ticketdescription');
-          console.log(
-            openTitle,
-            openDescription,
-            ticketTitle,
-            ticketDescription
-          );
-
-          const [settings, created] = await Settings.findOrCreate({
-            where: { id: interaction.guild.id },
-            defaults: {
-              id: interaction.guild.id,
-              ticket_title: ticketTitle,
-              ticket_description: ticketDescription,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          });
-
-          if (!created) {
-            await settings.update({
-              ticket_title: ticketTitle,
-              ticket_description: ticketDescription,
-              updatedAt: new Date(),
-            });
-          }
-
-          const embedTicket = new EmbedBuilder()
-            .setColor('#2f3136')
-            .setAuthor({
-              name: `${openTitle}`,
-              iconURL: interaction.guild.iconURL({ dynamic: true }),
-            })
-            .setDescription(openDescription)
-            .setFooter({
-              text: interaction.guild.name,
-              iconURL: interaction.guild.iconURL({ dynamic: true }),
-            });
-
-          const dbModule = new DBModule();
-          const { ticket_button_name, ticket_channel_id } =
-            await dbModule.getTicketChannelData(interaction.guildId);
-
-          const botaoTicket = new ButtonBuilder()
-            .setCustomId('abrirticket')
-            .setLabel(ticket_button_name || 'Abrir Ticket')
-            .setStyle(2)
-            .setEmoji('🎯');
-
-          const botoesTicket = new ActionRowBuilder().setComponents(
-            botaoTicket
-          );
-
-          const channel =
-            interaction.guild.channels.cache.get(ticket_channel_id);
-
-          channel.send({ embeds: [embedTicket], components: [botoesTicket] });
-
-          await interaction.reply({
-            content: 'Configurações de ticket criadas com sucesso!',
-            ephemeral: true,
-          });
-        } else {
-          return;
+          return await ticketModule.ticketModal(client, interaction);
         }
       }
 
@@ -109,7 +57,6 @@ module.exports = (client, slashCommands) => {
             `Ocorreu um erro ao executar o comando! Tente mais Tarde!`
           );
         }
-
         return command.execute(client, interaction, slashCommands);
       }
     } catch (err) {

@@ -54,13 +54,12 @@ class DBModule {
     }
   }
 
-  async getTicketChannelData(guildId) {
+  async getGuildData(guildId) {
     try {
       const ticketChannelData = await Settings.findOne({
         where: {
           id: guildId,
         },
-        attributes: ['ticket_button_name', 'ticket_channel_id'],
       });
 
       return ticketChannelData;

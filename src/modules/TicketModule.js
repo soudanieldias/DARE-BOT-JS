@@ -8,6 +8,7 @@ const {
 } = require('discord.js');
 const { Settings } = require('../database/models');
 const ticketModal = require('../modules/modals/ticketmodal.js');
+const discordTranscripts = require('discord-html-transcripts');
 const DBModule = require('./DBModule.js');
 
 module.exports = class TicketModule {
@@ -186,7 +187,92 @@ module.exports = class TicketModule {
       ephemeral: true,
     });
 
-    await this.embedTicket(client, interaction, guildData, ticketChannel);
+    await this.embedOpenedTicket(client, interaction, guildData, ticketChannel);
+  }
+
+  async ticketClose(client, interaction) {
+    const ticketMember = interaction.channel.topic;
+    const memberData = interaction.guild.members.cache.get(ticketMember);
+    const guildData = await this.dbModule.getGuildData(interaction.guildId);
+
+    if (memberData) {
+      interaction.channel.edit({ permissionOverwrites: [{ id: ticketMember, deny: [PermissionFlagsBits.ViewChannel] }] });
+    }
+
+    interaction.channel.edit({
+      permissionOverwrites: [
+        {
+          id: guildData.ticket_role_id,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.AttachFiles,
+            PermissionFlagsBits.EmbedLinks,
+            PermissionFlagsBits.AddReactions,
+          ],
+        },
+        {
+          id: interaction.guild.id,
+          deny: [PermissionFlagsBits.ViewChannel],
+        },
+      ],
+    });
+    await this.embedClosedTicket(client, interaction, guildData)
+  }
+
+  async ticketCloseMessage(client, interaction) {
+    return await interaction.message.delete();
+  }
+
+  async ticketReopen(client, interaction) {
+    const ticketMember = interaction.channel.topic;
+    const memberData = interaction.guild.members.cache.get(ticketMember);
+    const guildData = await this.dbModule.getGuildData(interaction.guildId);
+
+    if (memberData) {
+      interaction.channel.edit({ permissionOverwrites: [{ id: ticketMember, allow: [PermissionFlagsBits.ViewChannel] }] });
+    }
+
+    interaction.channel.edit({
+      permissionOverwrites: [
+        {
+          id: guildData.ticket_role_id,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.AttachFiles,
+            PermissionFlagsBits.EmbedLinks,
+            PermissionFlagsBits.AddReactions,
+          ],
+        },
+        {
+          id: interaction.guild.id,
+          deny: [PermissionFlagsBits.ViewChannel],
+        },
+      ],
+    });
+    await interaction.message.delete();
+    await this.embedReopenedTicket(client, interaction, guildData)
+  }
+
+  async ticketTranscript(client, interaction) {
+    const { channel, user } = interaction;
+
+        const attachment = await discordTranscripts.createTranscript(interaction.channel);
+
+        interaction.channel.delete();
+
+        const embed = new EmbedBuilder()
+          .setDescription(
+            `Ticket de <@${channel.topic}>\`(${channel.topic})\` \n Deletado por ${user}\`(${user.id})\``
+          )
+          .setColor('#2f3136')
+          .setTimestamp();
+
+        const guildData = await this.dbModule.getGuildData(interaction.guildId);
+        const logsChannel = interaction.guild.channels.cache.get(guildData.ticket_logs_channel_id);
+
+        logsChannel.send({ embeds: [embed], files: [attachment] });
   }
 
   async embedCreation(_client, interaction) {
@@ -214,7 +300,7 @@ module.exports = class TicketModule {
     return { embedCreated, buttonRowCreated };
   }
 
-  async embedTicket(client, interaction, guildData, ticketChannel) {
+  async embedOpenedTicket(client, interaction, guildData, ticketChannel) {
     const ticketChannelEmbed = new EmbedBuilder()
       .setColor('#2f3136')
       .setAuthor({
@@ -237,5 +323,60 @@ module.exports = class TicketModule {
     ticketChannel.send({ embeds: [ticketChannelEmbed], components: [closeButtonRow] }).then((m) => {
       m.pin();
     });
+  }
+
+  async embedReopenedTicket(client, interaction, guildData) {
+    const ticketChannelEmbed = new EmbedBuilder()
+      .setColor('#2f3136')
+      .setAuthor({
+        name: guildData.ticket_title,
+        iconURL: interaction.guild.iconURL({ dynamic: true }),
+      })
+      .setDescription(`Olá, <@!${interaction.channel.topic}>, o seu ticket foi reaberto pelo <@!${interaction.user.id}>`)
+      .setFooter({
+        text: interaction.guild.name,
+        iconURL: interaction.guild.iconURL({ dynamic: true }),
+      });
+
+    const closeButton = new ButtonBuilder()
+      .setCustomId('ticket-closemessage')
+      .setStyle(ButtonStyle.Primary)
+      .setLabel('Apagar Mensagem');
+
+    const closeButtonRow = new ActionRowBuilder().addComponents(closeButton);
+
+    interaction.channel.send({
+      content: `<@!${interaction.channel.topic}>`,
+      embeds: [ticketChannelEmbed],
+      components: [closeButtonRow]
+    });
+  }
+
+  async embedClosedTicket(client, interaction, guildData) {
+    const ticketClosedChannelEmbed = new EmbedBuilder()
+      .setColor('#2f3136')
+      .setAuthor({
+        name: guildData.ticket_title,
+        iconURL: interaction.guild.iconURL({ dynamic: true }),
+      })
+      .setDescription('Ticket fechado, escolha uma ação abaixo.')
+      .setFooter({
+        text: interaction.guild.name,
+        iconURL: interaction.guild.iconURL({ dynamic: true }),
+      });
+
+      const reopenButton = new ButtonBuilder()
+      .setCustomId('ticket-reopen')
+      .setStyle(ButtonStyle.Primary)
+      .setLabel('Reabrir Ticket');
+      
+      const transcriptButton = new ButtonBuilder()
+      .setCustomId('ticket-transcript')
+      .setStyle(ButtonStyle.Danger)
+      .setLabel('Transcrever Ticket');
+
+    const buttonsRow = new ActionRowBuilder().addComponents(reopenButton, transcriptButton);
+
+    interaction.reply({ embeds: [ticketClosedChannelEmbed], components: [buttonsRow] });
   }
 };

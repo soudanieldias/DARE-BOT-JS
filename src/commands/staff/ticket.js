@@ -89,10 +89,10 @@ module.exports = {
         ticketModule.config(client, interaction);
         break;
       case 'adduser':
-        ticketModule.addMember(client, interaction);
+        ticketModule.addUser(client, interaction);
         break;
       case 'removeuser':
-        ticketModule.removeMember(client, interaction);
+        ticketModule.removeUser(client, interaction);
         break;
     }
   },
