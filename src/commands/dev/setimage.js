@@ -18,7 +18,6 @@ module.exports = {
      * @param {import('discord.js').ChatInputCommandInteraction} interaction
      */
   execute: async (client, interaction) => {
-    // const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
     const isDeveloper = interaction.member.id === process.env.DEV_ID;
     
     if (!isDeveloper) return interaction.reply('Erro: Não Autorizado!!!');
