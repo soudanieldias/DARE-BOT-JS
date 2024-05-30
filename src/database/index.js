@@ -8,7 +8,6 @@ const environment = process.env.DB_ENV || 'development';
 
 const sequelize = new Sequelize(connection[environment]);
 
-
 sequelize.sync().then(() => {
   console.log('[Database] Todos os Models foram sincronizados com sucesso.');
   console.log(`[Database] Conectado no ambiente: ${process.env.DB_ENV}`);

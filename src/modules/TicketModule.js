@@ -178,7 +178,8 @@ module.exports = class TicketModule {
 
     const { embedCreated, buttonRowCreated } = await this.embedCreation(
       client,
-      interaction
+      interaction,
+      ticketChannel,
     );
 
     await interaction.reply({
@@ -275,7 +276,7 @@ module.exports = class TicketModule {
         logsChannel.send({ embeds: [embed], files: [attachment] });
   }
 
-  async embedCreation(_client, interaction) {
+  async embedCreation(_client, interaction, ticketChannel) {
     const embedCreated = new EmbedBuilder()
       .setColor('#2f3136')
       .setAuthor({
@@ -292,7 +293,7 @@ module.exports = class TicketModule {
 
     const button = new ButtonBuilder()
       .setLabel('Atalho')
-      .setURL(interaction.channel.url)
+      .setURL(ticketChannel.url)
       .setStyle(ButtonStyle.Link);
 
     const buttonRowCreated = new ActionRowBuilder().addComponents(button);
