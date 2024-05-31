@@ -9,7 +9,7 @@ const {
   DatabaseModule,
   InteractionModule,
   intentsList,
-  OnReady,
+  OnReadyModule,
   partialsList,
 } = require('./modules/index.js');
 
@@ -33,7 +33,7 @@ class App {
   }
   
   start() {
-    OnReady(this.client, this.TOKEN);
+    OnReadyModule(this.client, this.TOKEN);
     CommandLoaderModule(this.client, this.slashCommands);
     ButtonLoaderModule(this.client, this.buttons);
   }
