@@ -6,7 +6,7 @@ const CommandLoaderModule = require('./CommandLoaderModule.js');
 const DatabaseModule = require('./DatabaseModule.js');
 const InteractionModule = require('./InteractionModule.js');
 const LoggerModule = require('./LoggerModule.js');
-const OnReady = require('./OnReady.js');
+const OnReadyModule = require('./OnReadyModule.js');
 const SoundModule = require('./SoundModule.js');
 const TicketModule = require('./TicketModule.js');
 
@@ -19,7 +19,7 @@ module.exports = {
   intentsList,
   InteractionModule,
   LoggerModule,
-  OnReady,
+  OnReadyModule,
   partialsList,
   SoundModule,
   TicketModule,
