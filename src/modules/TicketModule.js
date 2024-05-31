@@ -9,16 +9,17 @@ const {
 const { Settings } = require('../database/models');
 const ticketModal = require('../modules/modals/ticketmodal.js');
 const discordTranscripts = require('discord-html-transcripts');
-const DBModule = require('./DBModule.js');
+const DatabaseModule = require('./DatabaseModule.js');
+
+/**
+ *
+ * @param {import('discord.js').Client} client
+ * @param {import('./DatabaseModule.js')} dbModule
+ * @param {import('discord.js').ChatInputCommandInteraction} interaction
+ */
 
 module.exports = class TicketModule {
-  /**
-   *
-   * @param {import('discord.js').Client} client
-   * @param {import('./DBModule.js')} dbModule
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction
-   */
-  dbModule = new DBModule();
+  dbModule = new DatabaseModule();
 
   async config(_client, interaction) {
     try {
@@ -50,7 +51,7 @@ module.exports = class TicketModule {
   }
 
   async addUser(client, interaction) {
-    this.checkTicketConfig(client, interaction);
+    await this.checkTicketConfig(client, interaction);
   }
 
   async removeUser(client, interaction) {

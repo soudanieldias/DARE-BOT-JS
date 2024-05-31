@@ -1,16 +1,12 @@
-// /* eslint-disable no-unused-vars */
-// const { EmbedBuilder, ButtonBuilder, ActionRowBuilder } = require('discord.js');
-// const { Settings } = require('../database/models');
-// const DBModule = require('./DBModule');
 const TicketModule = require('./TicketModule');
 
 /**
- *
  * @param {import('discord.js').Client} client
  * @param {import('discord.js').Interaction} interaction
- * @param {import('./DBModule').Interaction} dbModule
+ * @param {import('./DatabaseModule').Interaction} dbModule
  * @param {Array<{ data: SlashCommandBuilder, execute: Function }>} slashCommands
  */
+
 module.exports = (client, slashCommands) => {
   const ticketModule = new TicketModule();
 

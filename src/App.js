@@ -3,14 +3,14 @@ const { Client, Collection } = require('discord.js');
 const dotenv = require('dotenv');
 
 const {
-  DBModule,
-  partialsList,
+  ActivityModule,
+  ButtonLoaderModule,
+  CommandLoaderModule,
+  DatabaseModule,
+  InteractionModule,
   intentsList,
   OnReady,
-  LoadButtons,
-  LoadCommands,
-  OnInteraction,
-  SetActivity,
+  partialsList,
 } = require('./modules/index.js');
 
 dotenv.config();
@@ -27,15 +27,15 @@ class App {
   buttons = new Collection();
 
   constructor() {
-    SetActivity.default(this.client);
-    OnInteraction(this.client, this.slashCommands);
-    this.client.database = new DBModule(this.client);
+    ActivityModule.default(this.client);
+    InteractionModule(this.client, this.slashCommands);
+    this.client.database = new DatabaseModule(this.client);
   }
   
   start() {
     OnReady(this.client, this.TOKEN);
-    LoadCommands(this.client, this.slashCommands);
-    LoadButtons(this.client, this.buttons);
+    CommandLoaderModule(this.client, this.slashCommands);
+    ButtonLoaderModule(this.client, this.buttons);
   }
 }
 

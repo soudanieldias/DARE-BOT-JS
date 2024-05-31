@@ -3,7 +3,7 @@
 // const { sequelize } = require('../database/index.js');
 const { Guilds, Settings } = require('../database/models');
 
-class DBModule {
+class DatabaseModule {
   async databaseHandler(client) {
     try {
       console.log('[DataBase] Inicializando...');
@@ -70,4 +70,4 @@ class DBModule {
 }
 
 
-module.exports = DBModule;
+module.exports = DatabaseModule;
