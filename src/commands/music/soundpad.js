@@ -79,6 +79,8 @@ module.exports = {
 
         case 'interaction': {
           const pad = client.pads.get(customId);
+          if (!pad) return interaction.reply({ content: 'Pad não encontrado!', ephemeral: true});
+
           await soundModule.playSound(pad.path, connectionParams)
           return await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
         }
