@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { SoundModule } = require('../../modules/');
 const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
@@ -8,13 +7,13 @@ module.exports = {
     .setDescription('Comandos de SoundPad')
     .addSubcommand((subCommand) =>
       subCommand
-        .setName("list")
-        .setDescription("Lista todos os áudios disponíveis no SoundPad")
+        .setName('list')
+        .setDescription('Lista todos os áudios disponíveis no SoundPad')
     )
     .addSubcommand((subCommand) =>
       subCommand
-        .setName("play")
-        .setDescription("Toda o áudio selecionado")
+        .setName('play')
+        .setDescription('Toda o áudio selecionado')
         .addStringOption(option => 
           option.setName('filepath')
           .setDescription('Nome do arquivo de áudio')
@@ -23,8 +22,8 @@ module.exports = {
   category: 'music',
   /**
    *
-   * @param {import("discord.js").Client} client
-   * @param {import("discord.js").ChatInputCommandInteraction} interaction
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
    */
   execute: async (client, interaction) => {
     try {
@@ -37,7 +36,7 @@ module.exports = {
       }
 
       const guildId = guild.id;
-      const soundModule = new SoundModule();
+      const soundModule = client.soundModule;
       const connectionParams = { channelId, guildId, adapterCreator: interaction.guild.voiceAdapterCreator };
 
 
@@ -51,7 +50,7 @@ module.exports = {
 
           await soundModule.playSound(pad.path, connectionParams);
           await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
-          break;
+          return interaction.deleteReply();
         }
 
         case 'list': {
@@ -82,7 +81,8 @@ module.exports = {
           if (!pad) return interaction.reply({ content: 'Pad não encontrado!', ephemeral: true});
 
           await soundModule.playSound(pad.path, connectionParams)
-          return await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
+          await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
+          return interaction.deleteReply();
         }
 
         default: {

@@ -1,14 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { SoundModule } = require('../../modules/');
-const soundModule = new SoundModule();
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('music')
-    .setDescription('Sistema de Música DARE-Music')
-    .addSubcommand((subCommand) =>
-      subCommand
-        .setName('play')
+  .setName('music')
+  .setDescription('Sistema de Música DARE-Music')
+  .addSubcommand((subCommand) =>
+    subCommand
+  .setName('play')
         .setDescription('Toca uma música')
         .addStringOption((option) =>
           option.setName('query').setDescription('Nome ou link do Stream')
@@ -47,20 +45,20 @@ module.exports = {
             .setName('source')
             .setDescription('Link/Source do arquivo (mp3, mp4, webm, ogg)')
             .setRequired(true)
-        )
-    ),
+          )
+        ),
   category: 'music',
   /**
    *
    * @param {import('discord.js').Client} client
    * @param {import('discord.js').ChatInputCommandInteraction} interaction
    */
-  execute: async (_client, interaction) => {
+  execute: async (client, interaction) => {
     try {
       const { member, options } = interaction;
       const channelId = member.voice.channel.id;
       const guildId = interaction.guildId;
-      let source = '';
+      const soundModule = client.soundModule;
 
       if (!channelId)
         return interaction.reply(
@@ -83,7 +81,7 @@ module.exports = {
           break;
         }
         case 'stop': {
-          await soundModule.stopSound();
+          await soundModule.stopSound(interaction.guildId);
           await interaction.reply({
             content: 'Som parado com Sucesso',
             ephemeral: true,
@@ -98,13 +96,12 @@ module.exports = {
         }
         case 'volume':
           { const volume = options.getInteger('volume');
-          soundModule.changeVolume(Number(volume));
-          interaction.reply(`Volume alterado para ${volume}`, { ephemeral: true });
-          // interaction.reply({ content: `Comando Desabilitado temporariamente`, ephemeral: true });
+          soundModule.changeVolume(interaction.guildId, Number(volume/100));
+          interaction.reply({ content: `Volume alterado para ${volume}%`, ephemeral: true });
           break;
         }
         case 'playfile': {
-          source = options.getString('source');
+          const source = options.getString('source');
           soundModule.playSound(source, connectionParams);
 
           await interaction.reply({

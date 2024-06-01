@@ -1,5 +1,10 @@
 const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 
+/**
+ * @param {import('discord.js').Client} client
+ * @param {import('discord.js').Interaction} interaction
+ */
+
 module.exports = class SoundModule {
   constructor() {
     this.players = new Map();
@@ -24,12 +29,11 @@ module.exports = class SoundModule {
       this.connections.set(guildId, connection);
     }
 
-    // Create audio resource
-    const resource = createAudioResource(stream, { inlineVolume: false });
+    const resource = createAudioResource(stream, { inlineVolume: true });
     this.resources.set(guildId, resource);
 
     await connection.subscribe(player);
-    resource.volume?.setVolume(1);
+    resource.volume?.setVolume(0.5);
 
     // player.on('stateChange', (oldState, newState) => {
       // if (newState.status === 'idle') {
