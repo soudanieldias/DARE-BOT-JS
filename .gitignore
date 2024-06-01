@@ -1,6 +1,8 @@
 node_modules/
 .vscode/
 
+src/database/connection.json
+
 *.log
 *.env
 *.mp3
