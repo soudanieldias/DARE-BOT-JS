@@ -11,6 +11,7 @@ const {
   intentsList,
   OnReadyModule,
   partialsList,
+  SoundpadModule,
 } = require('./modules/index.js');
 
 dotenv.config();
@@ -24,18 +25,21 @@ class App {
   TOKEN = process.env.TOKEN;
 
   slashCommands = new Collection();
-  buttons = new Collection();
+  
 
   constructor() {
     ActivityModule.default(this.client);
     InteractionModule(this.client, this.slashCommands);
     this.client.database = new DatabaseModule(this.client);
+    this.client.soundpadModule = new SoundpadModule();
+    this.client.pads = new Collection();
   }
   
   start() {
     OnReadyModule(this.client, this.TOKEN);
     CommandLoaderModule(this.client, this.slashCommands);
-    ButtonLoaderModule(this.client, this.buttons);
+    ButtonLoaderModule(this.client);
+    this.client.soundpadModule.start(this.client);
   }
 }
 

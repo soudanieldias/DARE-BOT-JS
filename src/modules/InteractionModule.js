@@ -1,3 +1,4 @@
+const SoundpadModule = require('./SoundpadModule');
 const TicketModule = require('./TicketModule');
 
 /**
@@ -9,13 +10,18 @@ const TicketModule = require('./TicketModule');
 
 module.exports = (client, slashCommands) => {
   const ticketModule = new TicketModule();
+  const soundpadModule = new SoundpadModule();
 
   client.on('interactionCreate', async (interaction) => {
     try {
       const { message } = interaction;
 
+      if (interaction.isStringSelectMenu()) {
+        await soundpadModule.listSoundpads(client, interaction);
+      }
+
       if (interaction.isButton()) {
-        if (message.content.includes('Lista de Áudios: ')) {
+        if (message.content.includes('Lista de Áudios')) {
           const soundpad = slashCommands.get('soundpad');
           if (!soundpad)
             return interaction.reply('ERRO: Ocorreu um erro com o SoundPad!');

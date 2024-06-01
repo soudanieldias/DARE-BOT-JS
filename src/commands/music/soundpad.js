@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { SoundModule, ButtonModule } = require('../../modules/');
+const { SoundModule } = require('../../modules/');
+const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,7 +16,7 @@ module.exports = {
         .setName("play")
         .setDescription("Toda o áudio selecionado")
         .addStringOption(option => 
-          option.setName('filename')
+          option.setName('filepath')
           .setDescription('Nome do arquivo de áudio')
           .setRequired(true))
     ),
@@ -25,7 +26,7 @@ module.exports = {
    * @param {import("discord.js").Client} client
    * @param {import("discord.js").ChatInputCommandInteraction} interaction
    */
-  execute: async (_client, interaction) => {
+  execute: async (client, interaction) => {
     try {
       const { member, guild, options, customId } = interaction;
       const channelId = member?.voice.channel?.id;
@@ -37,7 +38,6 @@ module.exports = {
 
       const guildId = guild.id;
       const soundModule = new SoundModule();
-      let stream = '';
       const connectionParams = { channelId, guildId, adapterCreator: interaction.guild.voiceAdapterCreator };
 
 
@@ -45,30 +45,42 @@ module.exports = {
 
       switch (subCommand) {
         case 'play': {
-          const filename = options.getString('filename');
-          stream = `src/audios/soundpad/${filename}.mp3`;
-          soundModule.playSound(stream, connectionParams);
-          interaction.reply(`Tocando som: ${filename}`);
+          const fileName = options.getString('filepath');
+          const pad = client.pads.get(fileName);
+          if (!pad) return interaction.reply({ content: 'Pad não encontrado!', ephemeral: true});
+
+          await soundModule.playSound(pad.path, connectionParams);
+          await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
           break;
         }
 
         case 'list': {
-          const buttonModule = new ButtonModule();
-          const generatedButtons = await buttonModule.generateButtons();
-          const slicedButtons = await buttonModule.sliceButtonArray(generatedButtons, 5);
-          await interaction.reply('Enviando lista de áudios!');
-          slicedButtons.map( async (rowData, index) => {
-            await interaction.channel.send({ content: `Lista de Áudios: ${index + 1}`, components: [rowData]})
-          }); 
-          break;
+          const categories = [
+            { label: 'audios', value: 'spad_audios' },
+            { label: 'memes', value: 'spad_memes' },
+            { label: 'musicas', value: 'spad_musicas' },
+          ];
+
+          const row = new ActionRowBuilder()
+            .addComponents(
+              new StringSelectMenuBuilder()
+                .setCustomId('select_category')
+                .setPlaceholder('Escolha uma categoria...')
+                .addOptions(categories)
+            );
+
+          return await interaction.reply({
+            content: 'Selecione uma Categoria:',
+            embeds: [],
+            components : [row],
+            ephemeral: true,
+          });
         }
 
         case 'interaction': {
-          stream = `src/audios/soundpad/${customId}.mp3`;
-          soundModule.playSound(stream, connectionParams)
-          await interaction.reply(`${customId}`);
-          await interaction.deleteReply();
-          break;
+          const pad = client.pads.get(customId);
+          await soundModule.playSound(pad.path, connectionParams)
+          return await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
         }
 
         default: {

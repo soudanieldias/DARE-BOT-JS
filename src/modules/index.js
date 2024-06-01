@@ -8,6 +8,7 @@ const InteractionModule = require('./InteractionModule.js');
 const LoggerModule = require('./LoggerModule.js');
 const OnReadyModule = require('./OnReadyModule.js');
 const SoundModule = require('./SoundModule.js');
+const SoundpadModule = require('./SoundpadModule.js');
 const TicketModule = require('./TicketModule.js');
 
 module.exports = {
@@ -22,5 +23,6 @@ module.exports = {
   OnReadyModule,
   partialsList,
   SoundModule,
+  SoundpadModule,
   TicketModule,
 };
