@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 
-// const { sequelize } = require('../database/index.js');
 const { Guilds, Settings } = require('../database/models');
 
 class DatabaseModule {

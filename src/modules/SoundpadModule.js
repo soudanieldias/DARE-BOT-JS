@@ -25,6 +25,7 @@ class SoundpadModule {
     );
     await interaction.reply({
       content: `Enviando lista de áudios.\nCategoria ${buttonsPath.category}`,
+      ephemeral: true,
     });
     return slicedButtons.map(async (rowData, index) => {
       await interaction.channel.send({

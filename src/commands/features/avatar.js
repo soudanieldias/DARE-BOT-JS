@@ -17,19 +17,15 @@ module.exports = {
 	 * @param {Array<{ data: SlashCommandBuilder, execute: Function }>} slashCommands
    */
   async execute(_client, interaction) {
-    // Pegue o usuário fornecido ou o próprio usuário se nenhum for fornecido
     const user = interaction.options.getUser('user') || interaction.user;
 
-    // Obtenha o URL do avatar do usuário
     const avatarUrl = user.displayAvatarURL({ dynamic: true, size: 512 });
 
-    // Crie o Embed
     const embed = new EmbedBuilder()
       .setColor('#0099ff')
       .setTitle(`${user.username}'s Avatar`)
       .setImage(avatarUrl)
 
-    // Responda com o embed
     await interaction.reply({ embeds: [embed] });
   },
 };
