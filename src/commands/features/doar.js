@@ -22,7 +22,7 @@ module.exports = {
       .setDescription('Faça as suas doações através do PIX/PicPay, basta escanear o QR Code.')
       .setImage('https://i.imgur.com/nr8sxiX.jpeg')
       .setTimestamp()
-      .setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/cAPoJDf.jpeg' });
+      .setFooter({ text: 'DARE - Divisão de Ação Rápida Especial', iconURL: 'https://i.imgur.com/cAPoJDf.jpeg' });
       await interaction.reply({ embeds: [ embed ] });
 
     } catch (error) {
