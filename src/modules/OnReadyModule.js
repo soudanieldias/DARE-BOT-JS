@@ -1,3 +1,8 @@
+/**
+ *
+ * @param {import('discord.js').Client} client
+ * @param {import('discord.js').ChatInputCommandInteraction} interaction
+ */
 module.exports = async (client, token) => {
   client.on('ready', async () => {
     const discriminator = client.user.discriminator;
