@@ -33,7 +33,7 @@ module.exports = class SoundModule {
     this.resources.set(guildId, resource);
 
     await connection.subscribe(player);
-    resource.volume?.setVolume(0.5);
+    resource.volume?.setVolume(0.1);
 
     // player.on('stateChange', (oldState, newState) => {
       // if (newState.status === 'idle') {

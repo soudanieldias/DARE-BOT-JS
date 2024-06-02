@@ -2,14 +2,17 @@ const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-  .setName('music')
-  .setDescription('Sistema de Música DARE-Music')
-  .addSubcommand((subCommand) =>
-    subCommand
-  .setName('play')
+    .setName('music')
+    .setDescription('Sistema de Música DARE-Music')
+    .addSubcommand((subCommand) =>
+      subCommand
+        .setName('play')
         .setDescription('Toca uma música')
         .addStringOption((option) =>
-          option.setName('query').setDescription('Nome ou link do Stream')
+          option
+            .setName('query')
+            .setDescription('Nome ou link do Stream')
+            .setRequired(true)
         )
     )
     .addSubcommand((subCommand) =>
@@ -45,20 +48,21 @@ module.exports = {
             .setName('source')
             .setDescription('Link/Source do arquivo (mp3, mp4, webm, ogg)')
             .setRequired(true)
-          )
-        ),
+        )
+    ),
   category: 'music',
   /**
    *
    * @param {import('discord.js').Client} client
    * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   * @param {import('../../modules/SoundModule')} soundModule
    */
   execute: async (client, interaction) => {
     try {
-      const { member, options } = interaction;
+      const { member, options, guildId } = interaction;
       const channelId = member.voice.channel.id;
-      const guildId = interaction.guildId;
-      const soundModule = client.soundModule;
+      const { soundModule } = client;
+      const query = options.getString('query');
 
       if (!channelId)
         return interaction.reply(
@@ -75,6 +79,7 @@ module.exports = {
 
       switch (subCommand) {
         case 'play': {
+          await soundModule.playSound(query, connectionParams);
           interaction.reply('Comando executado com sucesso', {
             ephemeral: true,
           });
@@ -94,10 +99,13 @@ module.exports = {
             ephemeral: true,
           });
         }
-        case 'volume':
-          { const volume = options.getInteger('volume');
-          soundModule.changeVolume(interaction.guildId, Number(volume/100));
-          interaction.reply({ content: `Volume alterado para ${volume}%`, ephemeral: true });
+        case 'volume': {
+          const volume = options.getInteger('volume');
+          soundModule.changeVolume(interaction.guildId, Number(volume / 100));
+          interaction.reply({
+            content: `Volume alterado para ${volume}%`,
+            ephemeral: true,
+          });
           break;
         }
         case 'playfile': {
