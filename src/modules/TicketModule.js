@@ -31,15 +31,15 @@ module.exports = class TicketModule {
 
       await Settings.upsert({
         id: interaction.guild.id,
-        owner_id: interaction.guild.ownerId,
-        ticket_channel_id: canal.id,
-        ticket_button_name: botaoTicket,
-        announces_channel_id: canalLogs.id,
-        mod_role_id: cargo.id,
-        ticket_category_id: categoria.id,
-        ticket_logs_channel_id: canalLogs.id,
-        ticket_role_id: cargo.id,
-        ticket_title: botaoTicket,
+        owner: interaction.guild.ownerId,
+        ticketChannelId: canal.id,
+        ticketButtonName: botaoTicket,
+        announcesChannelId: canalLogs.id,
+        modRoleId: cargo.id,
+        ticketCategoryId: categoria.id,
+        ticketLogsChannelId: canalLogs.id,
+        ticketRoleId: cargo.id,
+        ticketTitle: botaoTicket,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -78,8 +78,8 @@ module.exports = class TicketModule {
       where: { id: interaction.guild.id },
       defaults: {
         id: interaction.guild.id,
-        ticket_title: ticketTitle,
-        ticket_description: ticketDescription,
+        ticketTitle: ticketTitle,
+        ticketDescription: ticketDescription,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -87,8 +87,8 @@ module.exports = class TicketModule {
 
     if (!created) {
       await settings.update({
-        ticket_title: ticketTitle,
-        ticket_description: ticketDescription,
+        ticketTitle: ticketTitle,
+        ticketDescription: ticketDescription,
         updatedAt: new Date(),
       });
     }
@@ -105,18 +105,18 @@ module.exports = class TicketModule {
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       });
 
-    const { ticket_button_name, ticket_channel_id } =
+    const { ticketButtonName, ticketChannelId } =
       await this.dbModule.getGuildData(interaction.guildId);
 
     const botaoTicket = new ButtonBuilder()
       .setCustomId('ticket-open')
-      .setLabel(ticket_button_name || 'Abrir Ticket')
+      .setLabel(ticketButtonName || 'Abrir Ticket')
       .setStyle(2)
       .setEmoji('🎯');
 
     const botoesTicket = new ActionRowBuilder().setComponents(botaoTicket);
 
-    const channel = interaction.guild.channels.cache.get(ticket_channel_id);
+    const channel = interaction.guild.channels.cache.get(ticketChannelId);
 
     channel.send({ embeds: [embedTicket], components: [botoesTicket] });
 
@@ -142,16 +142,16 @@ module.exports = class TicketModule {
 
     const guildData = await this.dbModule.getGuildData(interaction.guildId);
 
-    const { ticket_category_id, ticket_role_id } = guildData;
+    const { ticketCategoryId, ticketRoleId } = guildData;
 
     const ticketChannel = await interaction.guild.channels.create({
       name: `🔖・ticket--${interaction.user.username}`,
       type: ChannelType.GuildText,
       topic: `${interaction.user.id}`,
-      parent: ticket_category_id,
+      parent: ticketCategoryId,
       permissionOverwrites: [
         {
-          id: ticket_role_id,
+          id: ticketRoleId,
           allow: [
             PermissionFlagsBits.ViewChannel,
             PermissionFlagsBits.SendMessages,
@@ -204,7 +204,7 @@ module.exports = class TicketModule {
     interaction.channel.edit({
       permissionOverwrites: [
         {
-          id: guildData.ticket_role_id,
+          id: guildData.ticketRoleId,
           allow: [
             PermissionFlagsBits.ViewChannel,
             PermissionFlagsBits.SendMessages,
@@ -238,7 +238,7 @@ module.exports = class TicketModule {
     interaction.channel.edit({
       permissionOverwrites: [
         {
-          id: guildData.ticket_role_id,
+          id: guildData.ticketRoleId,
           allow: [
             PermissionFlagsBits.ViewChannel,
             PermissionFlagsBits.SendMessages,
@@ -272,7 +272,7 @@ module.exports = class TicketModule {
           .setTimestamp();
 
         const guildData = await this.dbModule.getGuildData(interaction.guildId);
-        const logsChannel = interaction.guild.channels.cache.get(guildData.ticket_logs_channel_id);
+        const logsChannel = interaction.guild.channels.cache.get(guildData.ticketLogsChannelId);
 
         logsChannel.send({ embeds: [embed], files: [attachment] });
   }
@@ -306,10 +306,10 @@ module.exports = class TicketModule {
     const ticketChannelEmbed = new EmbedBuilder()
       .setColor('#2f3136')
       .setAuthor({
-        name: guildData.ticket_title,
+        name: guildData.ticketTitle,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       })
-      .setDescription(guildData.ticket_description)
+      .setDescription(guildData.ticketDescription)
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
@@ -331,7 +331,7 @@ module.exports = class TicketModule {
     const ticketChannelEmbed = new EmbedBuilder()
       .setColor('#2f3136')
       .setAuthor({
-        name: guildData.ticket_title,
+        name: guildData.ticketTitle,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       })
       .setDescription(`Olá, <@!${interaction.channel.topic}>, o seu ticket foi reaberto pelo <@!${interaction.user.id}>`)
@@ -358,7 +358,7 @@ module.exports = class TicketModule {
     const ticketClosedChannelEmbed = new EmbedBuilder()
       .setColor('#2f3136')
       .setAuthor({
-        name: guildData.ticket_title,
+        name: guildData.ticketTitle,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       })
       .setDescription('Ticket fechado, escolha uma ação abaixo.')

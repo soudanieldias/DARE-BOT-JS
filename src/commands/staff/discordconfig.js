@@ -72,10 +72,10 @@ module.exports = {
         await Settings.findOrCreate({
           where: { id: interaction.guild.id },
           defaults: {
-            owner_id: interaction.guild.ownerId,
-            staff_channel_id: staffChannel.id,
-            announces_channel_id: announcechannel.id,
-            mod_role_id: modRole.id,
+            owner: interaction.guild.ownerId,
+            staffChannelId: staffChannel.id,
+            announcesChannelId: announcechannel.id,
+            modRoleId: modRole.id,
           },
         });
 
