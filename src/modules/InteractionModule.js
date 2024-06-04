@@ -34,6 +34,9 @@ module.exports = (client, slashCommands) => {
         if (interaction.customId == 'ticket-close') {
           return await ticketModule.ticketClose(client, interaction);
         }
+        if (interaction.customId == 'ticket-mention') {
+          return await ticketModule.ticketMentionUser(client, interaction);
+        }
         if (interaction.customId == 'ticket-reopen') {
           return await ticketModule.ticketReopen(client, interaction);
         }
@@ -56,7 +59,7 @@ module.exports = (client, slashCommands) => {
 
         if (!command) {
           return interaction.reply(
-            `Ocorreu um erro ao executar o comando! Tente mais Tarde!`
+            'Ocorreu um erro ao executar o comando! Tente mais Tarde!'
           );
         }
         return command.execute(client, interaction, slashCommands);

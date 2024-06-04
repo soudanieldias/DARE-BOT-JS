@@ -9,7 +9,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('ticket')
     .setDescription('Sistema de Ticket.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand
@@ -74,13 +74,18 @@ module.exports = {
             .setDescription('Membro que será removido do ticket.')
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('mencionar')
+        .setDescription('Mencione o membro que abriu o ticket em seu privado.')
     ),
-    category: 'staff',
-    /**
-     *
-     * @param {import('discord.js').Client} client
-     * @param {import('discord.js').ChatInputCommandInteraction} interaction
-     */
+  category: 'staff',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
   execute: async (client, interaction) => {
     const ticketModule = new TicketModule();
 
@@ -94,6 +99,8 @@ module.exports = {
       case 'removeuser':
         ticketModule.removeUser(client, interaction);
         break;
+      case 'mencionar':
+        ticketModule.ticketMentionUser(client, interaction);
     }
   },
 };
