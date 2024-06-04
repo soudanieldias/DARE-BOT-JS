@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
+const { ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('soundpad')
     .setDescription('Comandos de SoundPad')
-    .setDefaultMemberPermissions(true)
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
     .addSubcommand((subCommand) =>
       subCommand
         .setName('list')

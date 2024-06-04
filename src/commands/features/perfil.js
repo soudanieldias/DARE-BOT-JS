@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('perfil')
     .setDescription('Mostra o perfil do usuário')
-    .setDefaultMemberPermissions(true)
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
     .addUserOption(option =>
       option.setName('user')
         .setDescription('O usuário cujo perfil você quer ver')

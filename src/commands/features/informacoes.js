@@ -5,7 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('informacoes')
     .setDescription('Reproduz as informações do servidor no canal de voz')
-    .setDefaultMemberPermissions(true),
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands),
   category: 'features',
 	execute: async (_client, interaction) => {
     const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])

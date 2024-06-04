@@ -4,7 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('say')
     .setDescription('Transmite uma mensagem para o canal informado')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+    // .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addChannelOption(channel => (
       channel.setName('channel')
       .setDescription('Canal onde deseja enviar a Mensagem')

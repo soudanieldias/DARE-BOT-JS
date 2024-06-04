@@ -1,10 +1,11 @@
 const { EmbedBuilder, SlashCommandBuilder } = require('@discordjs/builders');
+const { PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('Lista os comandos disponíveis no BOT')
-    .setDefaultMemberPermissions(true),
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands),
 	category: 'help',
   /**
    *

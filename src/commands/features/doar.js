@@ -4,7 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('doar')
     .setDescription('Doe para ajudar a DARE.')
-    .setDefaultMemberPermissions(true),
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands),
   category: 'features',
   /**
    *

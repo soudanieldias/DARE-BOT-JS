@@ -1,10 +1,10 @@
-const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('serverinfo')
     .setDescription('Mostra um Embed com as informações sobre o Servidor/Guild')
-    .setDefaultMemberPermissions(true),
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands),
 	category: 'help',
   /**
    *

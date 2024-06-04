@@ -1,7 +1,6 @@
 const {
   SlashCommandBuilder,
   ChannelType,
-  PermissionFlagsBits,
 } = require('discord.js');
 const { TicketModule } = require('../../modules');
 
@@ -9,7 +8,6 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('ticket')
     .setDescription('Sistema de Ticket.')
-    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .setDMPermission(false)
     .addSubcommand((subcommand) =>
       subcommand

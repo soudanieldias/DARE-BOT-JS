@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('music')
     .setDescription('Sistema de Música DARE-Music')
-    .setDefaultMemberPermissions(true)
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
     .addSubcommand((subCommand) =>
       subCommand
         .setName('play')

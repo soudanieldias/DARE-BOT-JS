@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const config = require('../../config.json');
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
       option.setName('user')
       .setDescription('ID do usuário que irá receber a MD.')
       .setRequired(true)),
-  category: 'features',
+  category: 'staff',
   /**
    *
    * @param {import('discord.js').Client} client

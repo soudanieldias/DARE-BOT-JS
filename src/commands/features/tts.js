@@ -1,12 +1,12 @@
 const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
-const { SlashCommandBuilder} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const discordTTS = require('discord-tts');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('tts')
     .setDescription('Envia uma mensagem de Texto para voz com o DARE BOT')
-    .setDefaultMemberPermissions(true)
+    .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
     .addStringOption(message => (
       message.setName('message')
       .setDescription('Mensagem que será falada no canal de Voz')

@@ -12,12 +12,12 @@ module.exports = {
         .setDescription('O avatar')
         .setRequired(true)
     ),
-    category: 'dev',
-    /**
-     *
-     * @param {import('discord.js').Client} client
-     * @param {import('discord.js').ChatInputCommandInteraction} interaction
-     */
+  category: 'dev',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
   execute: async (client, interaction) => {
     const isDeveloper = interaction.member.id === process.env.DEV_ID;
     
