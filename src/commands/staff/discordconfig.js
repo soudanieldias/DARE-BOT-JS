@@ -9,6 +9,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('discordconfig')
     .setDescription('Configure o BOT em seu Discord')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addRoleOption((role) =>
       role
         .setName('modrole')

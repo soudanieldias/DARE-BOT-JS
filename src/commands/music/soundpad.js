@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('soundpad')
     .setDescription('Comandos de SoundPad')
+    .setDefaultMemberPermissions(true)
     .addSubcommand((subCommand) =>
       subCommand
         .setName('list')

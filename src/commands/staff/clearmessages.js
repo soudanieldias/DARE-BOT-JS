@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('clearmessages')
     .setDescription('Limpa o Chat')
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addIntegerOption(quantity => (
       quantity.setName('quantidade')
       .setDescription('Quantas mensagens deseja deletar? (1-100)')

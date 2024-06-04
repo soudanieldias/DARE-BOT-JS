@@ -6,17 +6,18 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('tts')
     .setDescription('Envia uma mensagem de Texto para voz com o DARE BOT')
+    .setDefaultMemberPermissions(true)
     .addStringOption(message => (
       message.setName('message')
       .setDescription('Mensagem que será falada no canal de Voz')
       .setRequired(true)
     )),
-    category: 'features',
-    /**
-     *
-     * @param {import('discord.js').Client} client
-     * @param {import('discord.js').ChatInputCommandInteraction} interaction
-     */
+  category: 'features',
+  /**
+   *
+   * @param {import('discord.js').Client} client
+   * @param {import('discord.js').ChatInputCommandInteraction} interaction
+   */
 	execute: async (_client, interaction) => {
 
     let player = new AudioPlayer();

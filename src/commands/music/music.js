@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('music')
     .setDescription('Sistema de Música DARE-Music')
+    .setDefaultMemberPermissions(true)
     .addSubcommand((subCommand) =>
       subCommand
         .setName('play')

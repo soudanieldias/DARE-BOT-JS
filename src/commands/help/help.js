@@ -3,7 +3,8 @@ const { EmbedBuilder, SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
 	data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Lista os comandos disponíveis no BOT'),
+    .setDescription('Lista os comandos disponíveis no BOT')
+    .setDefaultMemberPermissions(true),
 	category: 'help',
   /**
    *

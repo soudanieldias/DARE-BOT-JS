@@ -3,7 +3,8 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('disco
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('doar')
-    .setDescription('Doe para ajudar a DARE.'),
+    .setDescription('Doe para ajudar a DARE.')
+    .setDefaultMemberPermissions(true),
   category: 'features',
   /**
    *

@@ -3,7 +3,8 @@ const { EmbedBuilder, SlashCommandBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('serverinfo')
-    .setDescription('Mostra um Embed com as informações sobre o Servidor/Guild'),
+    .setDescription('Mostra um Embed com as informações sobre o Servidor/Guild')
+    .setDefaultMemberPermissions(true),
 	category: 'help',
   /**
    *

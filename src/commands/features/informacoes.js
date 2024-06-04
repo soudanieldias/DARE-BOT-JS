@@ -4,7 +4,9 @@ const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('informacoes')
-    .setDescription('Reproduz as informações do servidor no canal de voz'),
+    .setDescription('Reproduz as informações do servidor no canal de voz')
+    .setDefaultMemberPermissions(true),
+  category: 'features',
 	execute: async (_client, interaction) => {
     const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
   

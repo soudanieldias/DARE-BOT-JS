@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('avatar')
     .setDescription('Mostra o avatar do usuário')
+    .setDefaultMemberPermissions(true)
     .addUserOption(option =>
       option.setName('user')
         .setDescription('O usuário cujo avatar você quer ver')
