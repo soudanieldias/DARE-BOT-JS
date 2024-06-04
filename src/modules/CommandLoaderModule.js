@@ -30,7 +30,6 @@ module.exports = async (client, slashCommands) => {
 
       if(config['debug'] === true) {
         console.log(`[Commands] Comando ${name.toUpperCase()} carregado corretamente.`);
-        console.log(config['debug']);
       }
       restCommands.push(command.data);
     }
