@@ -198,7 +198,11 @@ module.exports = class TicketModule {
     const guildData = await this.dbModule.getGuildData(interaction.guildId);
 
     if (memberData) {
-      interaction.channel.edit({ permissionOverwrites: [{ id: ticketMember, deny: [PermissionFlagsBits.ViewChannel] }] });
+      interaction.channel.edit({
+        permissionOverwrites: [
+          { id: ticketMember, deny: [PermissionFlagsBits.ViewChannel] },
+        ],
+      });
     }
 
     interaction.channel.edit({
@@ -219,7 +223,7 @@ module.exports = class TicketModule {
         },
       ],
     });
-    await this.embedClosedTicket(client, interaction, guildData)
+    await this.embedClosedTicket(client, interaction, guildData);
   }
 
   async ticketCloseMessage(client, interaction) {
@@ -232,7 +236,11 @@ module.exports = class TicketModule {
     const guildData = await this.dbModule.getGuildData(interaction.guildId);
 
     if (memberData) {
-      interaction.channel.edit({ permissionOverwrites: [{ id: ticketMember, allow: [PermissionFlagsBits.ViewChannel] }] });
+      interaction.channel.edit({
+        permissionOverwrites: [
+          { id: ticketMember, allow: [PermissionFlagsBits.ViewChannel] },
+        ],
+      });
     }
 
     interaction.channel.edit({
@@ -254,27 +262,31 @@ module.exports = class TicketModule {
       ],
     });
     await interaction.message.delete();
-    await this.embedReopenedTicket(client, interaction, guildData)
+    await this.embedReopenedTicket(client, interaction, guildData);
   }
 
   async ticketTranscript(client, interaction) {
     const { channel, user } = interaction;
 
-        const attachment = await discordTranscripts.createTranscript(interaction.channel);
+    const attachment = await discordTranscripts.createTranscript(
+      interaction.channel
+    );
 
-        interaction.channel.delete();
+    interaction.channel.delete();
 
-        const embed = new EmbedBuilder()
-          .setDescription(
-            `Ticket de <@${channel.topic}>\`(${channel.topic})\` \n Deletado por ${user}\`(${user.id})\``
-          )
-          .setColor('#2f3136')
-          .setTimestamp();
+    const embed = new EmbedBuilder()
+      .setDescription(
+        `Ticket de <@${channel.topic}>\`(${channel.topic})\` \n Deletado por ${user}\`(${user.id})\``
+      )
+      .setColor('#2f3136')
+      .setTimestamp();
 
-        const guildData = await this.dbModule.getGuildData(interaction.guildId);
-        const logsChannel = interaction.guild.channels.cache.get(guildData.ticketLogsChannelId);
+    const guildData = await this.dbModule.getGuildData(interaction.guildId);
+    const logsChannel = interaction.guild.channels.cache.get(
+      guildData.ticketLogsChannelId
+    );
 
-        logsChannel.send({ embeds: [embed], files: [attachment] });
+    logsChannel.send({ embeds: [embed], files: [attachment] });
   }
 
   async embedCreation(_client, interaction, ticketChannel) {
@@ -319,12 +331,18 @@ module.exports = class TicketModule {
       .setCustomId('ticket-close')
       .setStyle(ButtonStyle.Danger)
       .setLabel('Fechar ticket');
+    const mentionButton = new ButtonBuilder()
+      .setCustomId('ticket-mention')
+      .setStyle(ButtonStyle.Primary)
+      .setLabel('Mencionar Usuário');
 
-    const closeButtonRow = new ActionRowBuilder().addComponents(closeButton);
+    const closeButtonRow = new ActionRowBuilder().addComponents(closeButton, mentionButton);
 
-    ticketChannel.send({ embeds: [ticketChannelEmbed], components: [closeButtonRow] }).then((m) => {
-      m.pin();
-    });
+    ticketChannel
+      .send({ embeds: [ticketChannelEmbed], components: [closeButtonRow] })
+      .then((m) => {
+        m.pin();
+      });
   }
 
   async embedReopenedTicket(client, interaction, guildData) {
@@ -334,7 +352,9 @@ module.exports = class TicketModule {
         name: guildData.ticketTitle,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       })
-      .setDescription(`Olá, <@!${interaction.channel.topic}>, o seu ticket foi reaberto pelo <@!${interaction.user.id}>`)
+      .setDescription(
+        `Olá, <@!${interaction.channel.topic}>, o seu ticket foi reaberto pelo <@!${interaction.user.id}>`
+      )
       .setFooter({
         text: interaction.guild.name,
         iconURL: interaction.guild.iconURL({ dynamic: true }),
@@ -350,7 +370,7 @@ module.exports = class TicketModule {
     interaction.channel.send({
       content: `<@!${interaction.channel.topic}>`,
       embeds: [ticketChannelEmbed],
-      components: [closeButtonRow]
+      components: [closeButtonRow],
     });
   }
 
@@ -367,18 +387,76 @@ module.exports = class TicketModule {
         iconURL: interaction.guild.iconURL({ dynamic: true }),
       });
 
-      const reopenButton = new ButtonBuilder()
+    const reopenButton = new ButtonBuilder()
       .setCustomId('ticket-reopen')
       .setStyle(ButtonStyle.Primary)
       .setLabel('Reabrir Ticket');
-      
-      const transcriptButton = new ButtonBuilder()
+
+    const transcriptButton = new ButtonBuilder()
       .setCustomId('ticket-transcript')
       .setStyle(ButtonStyle.Danger)
       .setLabel('Transcrever Ticket');
 
-    const buttonsRow = new ActionRowBuilder().addComponents(reopenButton, transcriptButton);
+    const buttonsRow = new ActionRowBuilder().addComponents(
+      reopenButton,
+      transcriptButton
+    );
 
-    interaction.reply({ embeds: [ticketClosedChannelEmbed], components: [buttonsRow] });
+    interaction.reply({
+      embeds: [ticketClosedChannelEmbed],
+      components: [buttonsRow],
+    });
+  }
+
+  async ticketMentionUser(client, interaction) {
+    const {
+      channel: { topic, url },
+      guild,
+    } = interaction;
+    const validUser = await guild.members.fetch(topic);
+    try {
+      if (!topic || !validUser) {
+        return interaction.reply({
+          content:
+            'Este canal não é um ticket, ou o usuário não se encontra mais no servidor.',
+          ephemeral: true,
+        });
+      }
+
+      const embed = new EmbedBuilder()
+        .setColor('#0099ff')
+        .setTitle('Ticket Aberto')
+        .setDescription(
+          `Olá ${validUser.user.tag}, você possui um ticket em aberto no servidor ${interaction.guild.name}, no qual foi mencionado.`
+        )
+        .addFields([{ name: 'Canal do ticket:', value: `<#${interaction.channel.id}>` }])
+        .setTimestamp();
+
+      const row = new ActionRowBuilder()
+        .addComponents(
+          new ButtonBuilder()
+            .setLabel('Ir para o ticket')
+            .setURL(url)
+            .setStyle(ButtonStyle.Link)
+        );
+
+      await validUser.send({
+        content: `Olá ${validUser.user}, você possui um ticket em aberto no qual foi mencionado:`,
+        embeds: [embed],
+        components: [row],
+      });
+
+      return interaction.reply({
+        content: 'O usuário foi mencionado',
+        ephemeral: true,
+      });
+
+    } catch (error) {
+      console.error('Erro ao buscar o membro do servidor: ', error);
+      return interaction.reply({
+        content: `Não foi possível mencionar o usuário ${validUser.user}.`,
+        ephemeral: true,
+      });
+    }
   }
 };
