@@ -56,6 +56,7 @@ module.exports = {
         case 'list': {
           const categories = [
             { label: 'audios', value: 'spad_audios' },
+            { label: 'frases', value: 'spad_frases' },
             { label: 'memes', value: 'spad_memes' },
             { label: 'musicas', value: 'spad_musicas' },
           ];
