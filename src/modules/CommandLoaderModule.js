@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { globSync } = require('glob');
 const { REST, Routes } = require('discord.js');
+const config = require('../config.json');
 
 module.exports = async (client, slashCommands) => {
   
@@ -14,6 +15,9 @@ module.exports = async (client, slashCommands) => {
     for (const file of commandFiles) {
       const command = require(`../../${file}`);
       const { name, description } = command.data;
+      if(config['debug'] === true) {
+        console.log(`[Commands] Comando ${name.toUpperCase()} sendo carregado...`);
+      }
       if (!name || !description) return;
 
       const cmd = client.application?.commands.cache.find((c) => (c.name === command.data.name));
@@ -23,6 +27,11 @@ module.exports = async (client, slashCommands) => {
       delete require.cache[require.resolve(`../../${file}`)];
 
       slashCommands.set(command.data.name, command);
+
+      if(config['debug'] === true) {
+        console.log(`[Commands] Comando ${name.toUpperCase()} carregado corretamente.`);
+        console.log(config['debug']);
+      }
       restCommands.push(command.data);
     }
 
@@ -36,5 +45,11 @@ module.exports = async (client, slashCommands) => {
 
   } catch (error) {
     console.error(`[Comandos] Ocorreu um erro ao carregar os comandos! \n${error}`);
+    
+    if(config['debug'] === true) {
+      const guildData = await client.guilds.fetch(config['guild-id']);
+      const devMember = await guildData.members.fetch(config['owner-id']);
+      devMember.send(`\`\`\`${JSON.stringify(error)}\`\`\``);
+    }
   }
 }
