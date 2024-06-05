@@ -14,6 +14,7 @@ const {
   partialsList,
   SoundpadModule,
   SoundModule,
+  TicketModule,
 } = require('./modules/index.js');
 
 dotenv.config();
@@ -37,6 +38,7 @@ class App {
     this.client.pads = new Collection();
     this.client.soundModule = new SoundModule();
     this.client.soundpadModule = new SoundpadModule();
+    this.client.ticketModule = new TicketModule();
   }
   
   start() {

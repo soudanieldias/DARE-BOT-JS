@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-
 const { Guilds, Settings } = require('../database/models');
 
 class DatabaseModule {
@@ -63,7 +62,7 @@ class DatabaseModule {
 
       return ticketChannelData;
     } catch (error) {
-      console.error(error);
+      console.error(`[${__filename}] Erro no arquivo: ${error}`);
     }
   }
 }

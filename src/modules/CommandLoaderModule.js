@@ -43,7 +43,7 @@ module.exports = async (client, slashCommands) => {
     console.log('[Comandos] Comandos carregados com Sucesso.');
 
   } catch (error) {
-    console.error(`[Comandos] Ocorreu um erro ao carregar os comandos! \n${error}`);
+    console.error(`[${__filename}] Erro no arquivo: ${error}`);
     
     if(config['debug'] === true) {
       const guildData = await client.guilds.fetch(config['guild-id']);

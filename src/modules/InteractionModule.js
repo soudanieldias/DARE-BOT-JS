@@ -1,5 +1,6 @@
-const SoundpadModule = require('./SoundpadModule');
+/* eslint-disable no-undef */
 const TicketModule = require('./TicketModule');
+const SoundpadModule = require('./SoundpadModule');
 
 /**
  * @param {import('discord.js').Client} client
@@ -9,15 +10,16 @@ const TicketModule = require('./TicketModule');
  */
 
 module.exports = (client, slashCommands) => {
-  const ticketModule = new TicketModule();
+  // const { soundpadModule, ticketModule } = client;
   const soundpadModule = new SoundpadModule();
+  const ticketModule = new TicketModule();
 
   client.on('interactionCreate', async (interaction) => {
     try {
-      const { message } = interaction;
+      const { message, customId } = interaction;
 
       if (interaction.isStringSelectMenu()) {
-        await soundpadModule.listSoundpads(client, interaction);
+        return await soundpadModule.listSoundpads(client, interaction);
       }
 
       if (interaction.isButton()) {
@@ -49,8 +51,14 @@ module.exports = (client, slashCommands) => {
       }
 
       if (interaction.isModalSubmit()) {
-        if (interaction.customId == 'ticketmodal') {
-          return await ticketModule.ticketModal(client, interaction);
+        switch (customId) {
+          case 'ticketmodal':
+            return await ticketModule.ticketModal(client, interaction);
+          default:
+            return await interaction.reply({
+              content: 'Erro, Modal não identificado!',
+              ephemeral: true,
+            });
         }
       }
 
@@ -59,13 +67,17 @@ module.exports = (client, slashCommands) => {
 
         if (!command) {
           return interaction.reply(
-            'Ocorreu um erro ao executar o comando! Tente mais Tarde!'
+            'Erro ao executar o comando: NÃO ENCONTRADO'
           );
         }
-        return command.execute(client, interaction, slashCommands);
+
+        switch (command) {
+          default:
+            return await command.execute(client, interaction, slashCommands);
+        }
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(`[${__filename}] Erro no arquivo: ${error}`);
     }
   });
 };

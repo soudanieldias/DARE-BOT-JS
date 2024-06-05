@@ -1,4 +1,8 @@
-const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
+const {
+  createAudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+} = require('@discordjs/voice');
 
 /**
  * @param {import('discord.js').Client} client
@@ -12,8 +16,9 @@ module.exports = class SoundModule {
     this.resources = new Map();
   }
 
-  playSound = async (stream, connectionParams) => {
+  playSound = async (client, interaction, stream, connectionParams) => {
     const { guildId } = connectionParams;
+    const { member } = interaction;
 
     let player = this.players.get(guildId);
 
@@ -24,9 +29,20 @@ module.exports = class SoundModule {
 
     let connection = this.connections.get(guildId);
 
-    if (!connection) {
+    if (connection) {
+      if (connection.joinConfig.channelId !== member.voice.channel.id) {
+        return interaction.reply(
+          'O bot já está conectado a outro canal de voz.'
+        );
+      }
+    } else {
       connection = joinVoiceChannel(connectionParams);
       this.connections.set(guildId, connection);
+      const playing = interaction.pad ? interaction.pad.name : stream;
+      await interaction.reply({
+        content: `Tocando som ${playing}`,
+        ephemeral: true,
+      });
     }
 
     const resource = createAudioResource(stream, { inlineVolume: true });
@@ -34,15 +50,6 @@ module.exports = class SoundModule {
 
     await connection.subscribe(player);
     resource.volume?.setVolume(0.1);
-
-    // player.on('stateChange', (oldState, newState) => {
-      // if (newState.status === 'idle') {
-        // connection.destroy();
-        // this.connections.delete(guildId);
-        // this.players.delete(guildId);
-        // this.resources.delete(guildId);
-      // }
-    // });
 
     return await player.play(resource);
   };
@@ -57,10 +64,10 @@ module.exports = class SoundModule {
     this.players.delete(guildId);
     this.connections.delete(guildId);
     this.resources.delete(guildId);
-  }
+  };
 
   changeVolume = async (guildId, volume) => {
     const resource = this.resources.get(guildId);
     if (resource) resource.volume?.setVolume(volume);
-  }
-}
+  };
+};

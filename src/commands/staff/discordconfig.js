@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const {
   SlashCommandBuilder,
   PermissionFlagsBits,
@@ -82,7 +83,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error(error);
+      console.error(`[${__filename}] Erro no arquivo: ${error}`);
     }
   },
 };

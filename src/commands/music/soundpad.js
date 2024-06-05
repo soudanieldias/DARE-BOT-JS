@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ActionRowBuilder, StringSelectMenuBuilder, PermissionFlagsBits } = require('discord.js');
 
@@ -47,10 +48,10 @@ module.exports = {
         case 'play': {
           const fileName = options.getString('filepath');
           const pad = client.pads.get(fileName);
+          interaction.pad = pad;
           if (!pad) return interaction.reply({ content: 'Pad não encontrado!', ephemeral: true});
 
-          await soundModule.playSound(pad.path, connectionParams);
-          await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
+          await soundModule.playSound(client, interaction, pad.path, connectionParams);
           return interaction.deleteReply();
         }
 
@@ -82,7 +83,7 @@ module.exports = {
           const pad = client.pads.get(customId);
           if (!pad) return interaction.reply({ content: 'Pad não encontrado!', ephemeral: true});
 
-          await soundModule.playSound(pad.path, connectionParams)
+          await soundModule.playSound(client, interaction, pad.path, connectionParams)
           await interaction.reply({ content: `Tocando som: ${pad.name}`, ephemeral: true });
           return interaction.deleteReply();
         }
@@ -92,7 +93,7 @@ module.exports = {
         }
       }
     } catch (error) {
-      console.error(`[Erro]: ${error}`);
+      console.error(`[${__filename}] Erro no arquivo: ${error}`);
     }
   }
 }

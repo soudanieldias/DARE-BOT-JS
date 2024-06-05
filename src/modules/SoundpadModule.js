@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { globSync } = require('glob');
 const ButtonModule = require('./ButtonModule.js');
 
@@ -58,7 +59,7 @@ class SoundpadModule {
         `[SoundPad] Soundpad inicializado ${client.pads.size} pads carregados.`
       );
     } catch (error) {
-      console.error(error);
+      console.error(`[${__filename}] Erro no arquivo: ${error}`);
     }
   };
 }

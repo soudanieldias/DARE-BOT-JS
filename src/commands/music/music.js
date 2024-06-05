@@ -80,7 +80,12 @@ module.exports = {
 
       switch (subCommand) {
         case 'play': {
-          await soundModule.playSound(query, connectionParams);
+          await soundModule.playSound(
+            client,
+            interaction,
+            query,
+            connectionParams
+          );
           interaction.reply('Comando executado com sucesso', {
             ephemeral: true,
           });
@@ -103,21 +108,19 @@ module.exports = {
         case 'volume': {
           const volume = options.getInteger('volume');
           soundModule.changeVolume(interaction.guildId, Number(volume / 100));
-          interaction.reply({
+          return await interaction.reply({
             content: `Volume alterado para ${volume}%`,
             ephemeral: true,
           });
-          break;
         }
         case 'playfile': {
           const source = options.getString('source');
-          soundModule.playSound(source, connectionParams);
-
-          await interaction.reply({
-            content: 'Comando executado com sucesso',
-            ephemeral: true,
-          });
-          break;
+          return await soundModule.playSound(
+            client,
+            interaction,
+            source,
+            connectionParams
+          );
         }
         default:
           break;
