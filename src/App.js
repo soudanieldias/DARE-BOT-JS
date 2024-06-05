@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 
 const {
   ActivityModule,
+  AdminModule,
   ButtonLoaderModule,
   CommandLoaderModule,
   DatabaseModule,
@@ -31,10 +32,11 @@ class App {
   constructor() {
     ActivityModule.default(this.client);
     InteractionModule(this.client, this.slashCommands);
+    this.client.adminModule = new AdminModule();
     this.client.database = new DatabaseModule(this.client);
-    this.client.soundpadModule = new SoundpadModule();
     this.client.pads = new Collection();
     this.client.soundModule = new SoundModule();
+    this.client.soundpadModule = new SoundpadModule();
   }
   
   start() {
