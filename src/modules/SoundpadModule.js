@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { globSync } = require('glob');
 const ButtonModule = require('./ButtonModule.js');
+const path = require('path');
 
 class SoundpadModule {
   constructor() {
@@ -59,7 +60,7 @@ class SoundpadModule {
         `[SoundPad] Soundpad inicializado ${client.pads.size} pads carregados.`
       );
     } catch (error) {
-      console.error(`[${__filename}] Erro no arquivo: ${error}`);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   };
 }

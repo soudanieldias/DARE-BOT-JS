@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 const { globSync } = require('glob');
+const path = require('path');
 
 module.exports = async (client) => {
   try {
@@ -24,6 +25,6 @@ module.exports = async (client) => {
 
     console.log('[Botões] Botões carregados com Sucesso.');
   } catch (error) {
-    console.error(`[${__filename}] Erro no arquivo: ${error}`);
+    console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
   }
 }

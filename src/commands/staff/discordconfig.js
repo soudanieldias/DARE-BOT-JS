@@ -4,6 +4,7 @@ const {
   PermissionFlagsBits,
   EmbedBuilder,
 } = require('discord.js');
+const path = require('path');
 const Settings = require('../../database/models/Settings');
 
 module.exports = {
@@ -83,7 +84,7 @@ module.exports = {
 
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error(`[${__filename}] Erro no arquivo: ${error}`);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   },
 };

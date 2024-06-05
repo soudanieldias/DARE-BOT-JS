@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const path = require('path');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -36,7 +37,7 @@ module.exports = {
       return interaction.reply({ content: 'Mensagem enviada com Sucesso!', ephemeral: true });
 
     } catch (error) {
-      console.error(`[${__filename}] Erro no arquivo: ${error}`);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   }
 };

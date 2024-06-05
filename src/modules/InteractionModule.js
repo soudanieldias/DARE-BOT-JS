@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const TicketModule = require('./TicketModule');
 const SoundpadModule = require('./SoundpadModule');
+const path = require('path');
 
 /**
  * @param {import('discord.js').Client} client
@@ -77,7 +78,7 @@ module.exports = (client, slashCommands) => {
         }
       }
     } catch (error) {
-      console.error(`[${__filename}] Erro no arquivo: ${error}`);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   });
 };

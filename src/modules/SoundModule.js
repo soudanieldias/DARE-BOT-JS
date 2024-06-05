@@ -8,7 +8,6 @@ const {
  * @param {import('discord.js').Client} client
  * @param {import('discord.js').Interaction} interaction
  */
-
 module.exports = class SoundModule {
   constructor() {
     this.players = new Map();
@@ -38,11 +37,7 @@ module.exports = class SoundModule {
     } else {
       connection = joinVoiceChannel(connectionParams);
       this.connections.set(guildId, connection);
-      const playing = interaction.pad ? interaction.pad.name : stream;
-      await interaction.reply({
-        content: `Tocando som ${playing}`,
-        ephemeral: true,
-      });
+      return;
     }
 
     const resource = createAudioResource(stream, { inlineVolume: true });

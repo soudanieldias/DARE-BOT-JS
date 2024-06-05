@@ -7,6 +7,7 @@ const {
   ChannelType,
   ButtonStyle,
 } = require('discord.js');
+const path = require('path');
 
 const { Settings } = require('../database/models/index.js');
 const ticketModal = require('./modals/ticketmodal.js');
@@ -453,7 +454,7 @@ module.exports = class TicketModule {
         ephemeral: true,
       });
     } catch (error) {
-      console.error(`[${__filename}] Erro no arquivo: ${error}`);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
       return interaction.reply({
         content: `Não foi possível mencionar o usuário ${validUser.user}.`,
         ephemeral: true,
