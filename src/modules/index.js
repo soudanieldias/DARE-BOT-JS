@@ -1,5 +1,6 @@
 const { partialsList, intentsList } = require('./ClientConfigModule.js');
 const ActivityModule = require('./ActivityModule.js');
+const AdminModule = require('./AdminModule.js');
 const ButtonLoaderModule = require('./ButtonLoaderModule.js');
 const ButtonModule = require('./ButtonModule.js');
 const CommandLoaderModule = require('./CommandLoaderModule.js');
@@ -13,6 +14,7 @@ const TicketModule = require('./TicketModule.js');
 
 module.exports = {
   ActivityModule,
+  AdminModule,
   ButtonLoaderModule,
   ButtonModule,
   CommandLoaderModule,
