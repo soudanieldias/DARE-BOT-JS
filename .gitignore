@@ -3,8 +3,10 @@ node_modules/
 
 src/database/connection.json
 
-*.log
+*.avi
 *.env
+*.log
 *.mp3
+*.mp4
 *.wav
 *.webm
