@@ -58,9 +58,9 @@ module.exports = class SoundModule {
       this._cleanupConnection(guildId);
     });
 
-    const resource = createAudioResource(stream, {
-      inlineVolume: true,
-    }).volume.setVolume(0.1);
+    const resource = createAudioResource(stream, { inlineVolume: true });
+    resource.volume.setVolume(0.1);
+
     this.resources.set(guildId, resource);
 
     await connection.subscribe(player);
