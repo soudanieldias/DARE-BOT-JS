@@ -31,6 +31,13 @@ module.exports = {
         .setDescription(
           'Canal onde os anúncios programados do BOT serão enviados'
         )
+    )
+    .addChannelOption((channel) =>
+      channel
+        .setName('suggestionschannel')
+        .setDescription(
+          'Canal onde as sugestões serão enviados'
+        )
     ),
   category: 'staff',
   /**
@@ -56,6 +63,7 @@ module.exports = {
       const modRole = interaction.options.getRole('modrole');
       const staffChannel = interaction.options.getChannel('staffchannel');
       const announcechannel = interaction.options.getChannel('announcechannel');
+      const suggestionsChannel = interaction.options.getChannel('suggestionschannel');
 
       const embed = new EmbedBuilder()
         .setTitle('Resumo das configurações')
@@ -78,6 +86,7 @@ module.exports = {
             owner: interaction.guild.ownerId,
             staffChannelId: staffChannel.id,
             announcesChannelId: announcechannel.id,
+            suggestionsChannelId: suggestionsChannel.id,
             modRoleId: modRole.id,
           },
         });
