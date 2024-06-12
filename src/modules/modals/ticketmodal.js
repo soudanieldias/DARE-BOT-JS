@@ -1,4 +1,8 @@
-const { TextInputBuilder, ActionRowBuilder, ModalBuilder } = require("@discordjs/builders");
+const {
+  TextInputBuilder,
+  ActionRowBuilder,
+  ModalBuilder,
+} = require('@discordjs/builders');
 
 const modal = new ModalBuilder()
   .setCustomId('ticketmodal')

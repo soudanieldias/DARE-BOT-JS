@@ -1,6 +1,4 @@
 /* eslint-disable no-undef */
-const TicketModule = require('./TicketModule');
-const SoundpadModule = require('./SoundpadModule');
 const path = require('path');
 
 /**
@@ -11,9 +9,7 @@ const path = require('path');
  */
 
 module.exports = (client, slashCommands) => {
-  // const { soundpadModule, ticketModule } = client;
-  const soundpadModule = new SoundpadModule();
-  const ticketModule = new TicketModule();
+  const { soundpadModule, ticketModule, embedModule } = client;
 
   client.on('interactionCreate', async (interaction) => {
     try {
@@ -31,23 +27,33 @@ module.exports = (client, slashCommands) => {
           return await soundpad.execute(client, interaction);
         }
 
-        if (interaction.customId == 'ticket-open') {
-          return await ticketModule.ticketOpen(client, interaction);
-        }
-        if (interaction.customId == 'ticket-close') {
-          return await ticketModule.ticketClose(client, interaction);
-        }
-        if (interaction.customId == 'ticket-mention') {
-          return await ticketModule.ticketMentionUser(client, interaction);
-        }
-        if (interaction.customId == 'ticket-reopen') {
-          return await ticketModule.ticketReopen(client, interaction);
-        }
-        if (interaction.customId == 'ticket-closemessage') {
-          return await ticketModule.ticketCloseMessage(client, interaction);
-        }
-        if (interaction.customId == 'ticket-transcript') {
-          return await ticketModule.ticketTranscript(client, interaction);
+        switch (interaction.customId) {
+          case 'ticket-open':
+            return await ticketModule.ticketOpen(client, interaction);
+
+          case 'ticket-close':
+            return await ticketModule.ticketClose(client, interaction);
+
+          case 'ticket-mention':
+            return await ticketModule.ticketMentionUser(client, interaction);
+
+          case 'ticket-reopen':
+            return await ticketModule.ticketReopen(client, interaction);
+
+          case 'ticket-closemessage':
+            return await ticketModule.ticketCloseMessage(client, interaction);
+
+          case 'ticket-transcript':
+            return await ticketModule.ticketTranscript(client, interaction);
+          
+          case 'embed-cancel':
+            return await embedModule.cancel(client, interaction);
+
+          case 'embed-send':
+            return await embedModule.send(client, interaction);
+
+          default:
+            break;
         }
       }
 
@@ -66,11 +72,7 @@ module.exports = (client, slashCommands) => {
       if (interaction.isChatInputCommand()) {
         const command = slashCommands.get(interaction.commandName);
 
-        if (!command) {
-          return interaction.reply(
-            'Erro ao executar o comando: NÃO ENCONTRADO'
-          );
-        }
+        if (!command) return interaction.reply('Erro ao executar o comando: NÃO ENCONTRADO');
 
         switch (command) {
           default:
