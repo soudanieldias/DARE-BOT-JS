@@ -2,6 +2,7 @@ const {
   createAudioPlayer,
   createAudioResource,
   joinVoiceChannel,
+  VoiceConnectionStatus,
 } = require('@discordjs/voice');
 
 /**
@@ -29,40 +30,71 @@ module.exports = class SoundModule {
     let connection = this.connections.get(guildId);
 
     if (connection) {
-      if (connection.joinConfig.channelId !== member.voice.channel.id) {
+      const currentChannel = connection.joinConfig.channelId;
+      const botChannel = member.guild.channels.cache.get(currentChannel);
+      if (
+        connection.joinConfig.channelId !== member.voice.channel.id &&
+        !botChannel.members.size === 1
+      ) {
         return interaction.reply(
           'O bot já está conectado a outro canal de voz.'
         );
       }
-    } else {
-      connection = joinVoiceChannel(connectionParams);
-      this.connections.set(guildId, connection);
-      return;
     }
 
-    const resource = createAudioResource(stream, { inlineVolume: true });
+    connection = joinVoiceChannel(connectionParams);
+    this.connections.set(guildId, connection);
+
+    connection.on(VoiceConnectionStatus.Disconnected, async () => {
+      try {
+        this._cleanupConnection(guildId);
+      } catch (error) {
+        console.error(error);
+        this._cleanupConnection(guildId);
+      }
+    });
+
+    connection.on(VoiceConnectionStatus.Destroyed, () => {
+      this._cleanupConnection(guildId);
+    });
+
+    const resource = createAudioResource(stream, {
+      inlineVolume: true,
+    }).volume.setVolume(0.1);
     this.resources.set(guildId, resource);
 
     await connection.subscribe(player);
-    resource.volume?.setVolume(0.1);
-
     return await player.play(resource);
   };
 
   stopSound = async (guildId) => {
+    this._cleanupConnection(guildId);
+  };
+
+  changeVolume = async (guildId, volume) => {
+    const resource = this.resources.get(guildId);
+    if (resource) resource.volume?.setVolume(volume);
+  };
+
+  _cleanupConnection = (guildId) => {
     const player = this.players.get(guildId);
-    const connection = this.connections.get(guildId);
 
     if (player) player.stop();
-    if (connection) connection.destroy();
 
     this.players.delete(guildId);
     this.connections.delete(guildId);
     this.resources.delete(guildId);
   };
 
-  changeVolume = async (guildId, volume) => {
-    const resource = this.resources.get(guildId);
-    if (resource) resource.volume?.setVolume(volume);
+  monitorConnections = (client) => {
+    setInterval(() => {
+      this.connections.forEach((connection, guildId) => {
+        const guild = client.guilds.cache.get(guildId);
+        const botMember = guild.members.cache.get(client.user.id);
+        if (!botMember.voice.channel) {
+          this._cleanupConnection(guildId);
+        }
+      });
+    }, 30000);
   };
 };
