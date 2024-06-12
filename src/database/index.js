@@ -4,7 +4,7 @@ const connection = require('./connection.json');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const environment = process.env.DB_ENV || 'development';
+const environment = process.env.DB_ENV || 'production';
 
 const sequelize = new Sequelize(connection[environment]);
 
