@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const {
   ActionRowBuilder,
   ButtonBuilder,
@@ -6,8 +7,10 @@ const {
   ChannelType,
   ButtonStyle,
 } = require('discord.js');
-const { Settings } = require('../database/models');
-const ticketModal = require('../modules/modals/ticketmodal.js');
+const path = require('path');
+
+const { Settings } = require('../database/models/index.js');
+const ticketModal = require('./modals/ticketmodal.js');
 const discordTranscripts = require('discord-html-transcripts');
 const DatabaseModule = require('./DatabaseModule.js');
 
@@ -450,9 +453,8 @@ module.exports = class TicketModule {
         content: 'O usuário foi mencionado',
         ephemeral: true,
       });
-
     } catch (error) {
-      console.error('Erro ao buscar o membro do servidor: ', error);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
       return interaction.reply({
         content: `Não foi possível mencionar o usuário ${validUser.user}.`,
         ephemeral: true,

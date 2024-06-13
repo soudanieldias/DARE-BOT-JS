@@ -28,7 +28,7 @@ module.exports = {
       .setThumbnail(avatarUrl)
       .addFields(
         { name: 'Nome do Usuário: ', value: `${user.username}` },
-        { name: 'Menção do usuário: ', value: `<@!${user.tag}>` },
+        { name: 'Menção do usuário: ', value: `<@!${user.id}>` },
         { name: 'Location: ', value: `${interaction.guild?.preferredLocale}`, inline: true },
         { name: 'Created', value: `${interaction.guild.createdAt.toLocaleString()}`, inline: true },
       )
@@ -38,8 +38,6 @@ module.exports = {
         iconURL: `${client.user.avatarURL()}`
       });
 
-    // await interaction.reply({ embeds: [embed] });
-    console.log(embed.data);
-    await interaction.reply({ content: `${JSON.stringify(user)}`, ephemeral: true });
+    return await interaction.reply({ embeds: [embed] });
   },
 };

@@ -13,6 +13,7 @@ Settings.init({
   staffChannelId: DataTypes.STRING,
   ticketChannelId: DataTypes.STRING,
   announcesChannelId: DataTypes.STRING,
+  suggestionsChannelId: DataTypes.STRING,
   modRoleId: DataTypes.STRING,
   ticketCategoryId: DataTypes.STRING,
   ticketLogsChannelId: DataTypes.STRING,

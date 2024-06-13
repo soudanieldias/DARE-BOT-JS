@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { globSync } = require('glob');
 const { REST, Routes } = require('discord.js');
+const path = require('path');
 const config = require('../config.json');
 
 module.exports = async (client, slashCommands) => {
@@ -43,7 +44,7 @@ module.exports = async (client, slashCommands) => {
     console.log('[Comandos] Comandos carregados com Sucesso.');
 
   } catch (error) {
-    console.error(`[Comandos] Ocorreu um erro ao carregar os comandos! \n${error}`);
+    console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     
     if(config['debug'] === true) {
       const guildData = await client.guilds.fetch(config['guild-id']);
