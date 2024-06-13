@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-
 const { Guilds, Settings } = require('../database/models');
+const path = require('path');
 
 class DatabaseModule {
   async databaseHandler(client) {
@@ -9,7 +9,7 @@ class DatabaseModule {
       await this.populateServers(client);
       console.log('[DataBase] Inicializada com sucesso.');
     } catch (error) {
-      console.error(`Erro ${__filename}: ${error}`);
+      console.error(`Erro ${path.basename(__filename)}: ${error}`);
     }
   }
 
@@ -30,7 +30,7 @@ class DatabaseModule {
 
       console.log('[Database] Guildas populadas no banco de dados com sucesso.');
     } catch (error) {
-      console.error(`Erro ${__filename}: ${error}`);
+      console.error(`Erro ${path.basename(__filename)}: ${error}`);
     }
   }
 
@@ -49,7 +49,7 @@ class DatabaseModule {
         return ticketSettings;
       }
     } catch (error) {
-      console.error(`Erro ${__filename}: ${error}`);
+      console.error(`Erro ${path.basename(__filename)}: ${error}`);
     }
   }
 
@@ -63,7 +63,7 @@ class DatabaseModule {
 
       return ticketChannelData;
     } catch (error) {
-      console.error(error);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   }
 }

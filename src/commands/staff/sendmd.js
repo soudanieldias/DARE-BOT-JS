@@ -1,4 +1,6 @@
+/* eslint-disable no-undef */
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const path = require('path');
 const config = require('../../config.json');
 
 module.exports = {
@@ -32,7 +34,7 @@ module.exports = {
       await interaction.reply('Mensagem enviada com sucesso.');
 
     } catch (error) {
-      console.error('[SendMD]', error);
+      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
   }
 };
