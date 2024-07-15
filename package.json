@@ -15,30 +15,30 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.17.0",
-    "@google-cloud/text-to-speech": "^5.2.0",
+    "@google-cloud/text-to-speech": "^5.3.0",
     "discord-html-transcripts": "^3.2.0",
     "discord-tts": "^1.2.2",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
-    "glob": "^10.3.12",
-    "libsodium-wrappers": "^0.7.13",
-    "mysql2": "^3.9.8",
+    "glob": "^10.4.5",
+    "libsodium-wrappers": "^0.7.14",
+    "mysql2": "^3.10.2",
     "node-opus": "^0.3.3",
     "node-wav": "^0.0.2",
-    "nodemon": "^3.1.2",
-    "prisma": "^5.13.0",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.16.2",
     "process": "^0.11.10",
     "sequelize": "^6.37.3",
     "simple-node-logger": "^21.8.12",
     "soundcloud-mp3": "^1.0.0",
     "speak-tts": "^2.0.8",
-    "tslib": "^2.6.2",
+    "tslib": "^2.6.3",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
-    "eslint": "^9.3.0",
-    "globals": "^15.3.0"
+    "@eslint/js": "^9.7.0",
+    "eslint": "^9.7.0",
+    "globals": "^15.8.0"
   }
 }
