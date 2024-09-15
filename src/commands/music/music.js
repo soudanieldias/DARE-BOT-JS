@@ -94,14 +94,15 @@ module.exports = {
         case 'stop': {
           await soundModule.stopSound(interaction.guildId);
           await interaction.reply({
-            content: 'Som parado com Sucesso',
+            content: 'Parando música e limpando a fila...',
             ephemeral: true,
           });
           break;
         }
         case 'next': {
+          soundModule.skip(interaction.guild.id);
           return interaction.reply({
-            content: 'Comando desabilitado temporariamente',
+            content: 'Pulando música na fila...',
             ephemeral: true,
           });
         }

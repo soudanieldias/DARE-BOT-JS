@@ -3,6 +3,7 @@ const {
   createAudioResource,
   joinVoiceChannel,
   VoiceConnectionStatus,
+  AudioPlayerStatus,
 } = require('@discordjs/voice');
 
 /**
@@ -14,6 +15,7 @@ module.exports = class SoundModule {
     this.players = new Map();
     this.connections = new Map();
     this.resources = new Map();
+    this.queues = new Map();
   }
 
   playSound = async (client, interaction, stream, connectionParams) => {
@@ -25,13 +27,18 @@ module.exports = class SoundModule {
     if (!player) {
       player = createAudioPlayer();
       this.players.set(guildId, player);
+      
+      player.on(AudioPlayerStatus.Idle, () => {
+        this._playNextInQueue(guildId);
+      });
     }
-
+    
     let connection = this.connections.get(guildId);
-
+    
     if (connection) {
       const currentChannel = connection.joinConfig.channelId;
       const botChannel = member.guild.channels.cache.get(currentChannel);
+      console.log(botChannel.members);
       if (
         connection.joinConfig.channelId !== member.voice.channel.id &&
         !botChannel.members.size === 1
@@ -58,13 +65,43 @@ module.exports = class SoundModule {
       this._cleanupConnection(guildId);
     });
 
+    this._enqueue(guildId, stream);
+
+    if (player.state.status !== AudioPlayerStatus.Playing) {
+      this._playNextInQueue(guildId);
+    }
+  };
+
+  _enqueue = (guildId, stream) => {
+    if (!this.queues.has(guildId)) {
+      this.queues.set(guildId, []);
+    }
+
+    const queue = this.queues.get(guildId);
+    queue.push(stream);
+  };
+
+  _playNextInQueue = (guildId) => {
+    const queue = this.queues.get(guildId);
+    if (!queue || queue.length === 0) {
+      return;
+    }
+
+    const stream = queue.shift();
+
+    const player = this.players.get(guildId);
+    const connection = this.connections.get(guildId);
+    if (!player || !connection) {
+      return;
+    }
+
     const resource = createAudioResource(stream, { inlineVolume: true });
     resource.volume.setVolume(0.1);
 
     this.resources.set(guildId, resource);
 
-    await connection.subscribe(player);
-    return await player.play(resource);
+    connection.subscribe(player);
+    player.play(resource);
   };
 
   stopSound = async (guildId) => {
@@ -84,7 +121,20 @@ module.exports = class SoundModule {
     this.players.delete(guildId);
     this.connections.delete(guildId);
     this.resources.delete(guildId);
+    this.queues.delete(guildId);
   };
+
+  skip = (guildId) => {
+    const player = this.players.get(guildId);
+    const queue = this.queues.get(guildId);
+  
+    if (!player || !queue || queue.length === 0) {
+      return;
+    }
+  
+    return this._playNextInQueue(guildId);
+  };
+  
 
   monitorConnections = (client) => {
     setInterval(() => {
