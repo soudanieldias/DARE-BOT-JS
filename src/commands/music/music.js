@@ -43,7 +43,7 @@ module.exports = {
     .addSubcommand((subCommand) =>
       subCommand
         .setName('playfile')
-        .setDescription('Toda um áudio da internet (mp3, mp4, webm, ogg)')
+        .setDescription('Toca um áudio da internet (mp3, mp4, webm, ogg)')
         .addStringOption((option) =>
           option
             .setName('source')

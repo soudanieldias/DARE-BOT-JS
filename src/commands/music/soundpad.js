@@ -17,7 +17,7 @@ module.exports = {
   .addSubcommand((subCommand) =>
       subCommand
         .setName('play')
-        .setDescription('Toda o áudio selecionado')
+        .setDescription('Toca o áudio selecionado')
         .addStringOption(option => 
           option.setName('filepath')
           .setDescription('Nome do arquivo de áudio')
