@@ -13,6 +13,7 @@ yarn.lock
 # Arquivos de ambiente e configuração
 .env
 .env.*
+*.env
 config.json
 src/database/connection.json
 

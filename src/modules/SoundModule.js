@@ -4,7 +4,10 @@ const {
   joinVoiceChannel,
   VoiceConnectionStatus,
   AudioPlayerStatus,
+  NoSubscriberBehavior,
+  entersState
 } = require('@discordjs/voice');
+const play = require('play-dl');
 
 /**
  * @param {import('discord.js').Client} client
@@ -25,7 +28,11 @@ module.exports = class SoundModule {
     let player = this.players.get(guildId);
 
     if (!player) {
-      player = createAudioPlayer();
+      player = createAudioPlayer({
+        behaviors: {
+          noSubscriber: NoSubscriberBehavior.Play
+        }
+      });
       this.players.set(guildId, player);
       
       player.on(AudioPlayerStatus.Idle, () => {
@@ -38,14 +45,15 @@ module.exports = class SoundModule {
     if (connection) {
       const currentChannel = connection.joinConfig.channelId;
       const botChannel = member.guild.channels.cache.get(currentChannel);
-      console.log(botChannel.members);
+      
       if (
         connection.joinConfig.channelId !== member.voice.channel.id &&
-        !botChannel.members.size === 1
+        botChannel.members.size > 1
       ) {
-        return interaction.reply(
-          'O bot já está conectado a outro canal de voz.'
-        );
+        return interaction.reply({
+          content: 'O bot já está conectado a outro canal de voz.',
+          ephemeral: true
+        });
       }
     }
 
@@ -54,9 +62,11 @@ module.exports = class SoundModule {
 
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
       try {
-        this._cleanupConnection(guildId);
-      } catch (error) {
-        console.error(error);
+        await Promise.race([
+          entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
+          entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+        ]);
+      } catch {
         this._cleanupConnection(guildId);
       }
     });
@@ -64,6 +74,20 @@ module.exports = class SoundModule {
     connection.on(VoiceConnectionStatus.Destroyed, () => {
       this._cleanupConnection(guildId);
     });
+
+    // Se for uma URL do YouTube, usa o play-dl para obter o stream
+    if (typeof stream === 'string' && (stream.includes('youtube.com') || stream.includes('youtu.be'))) {
+      try {
+        const streamInfo = await play.stream(stream);
+        stream = streamInfo.stream;
+      } catch (error) {
+        console.error('Erro ao obter stream do YouTube:', error);
+        return interaction.reply({
+          content: 'Erro ao reproduzir o vídeo do YouTube.',
+          ephemeral: true
+        });
+      }
+    }
 
     this._enqueue(guildId, stream);
 
@@ -95,7 +119,10 @@ module.exports = class SoundModule {
       return;
     }
 
-    const resource = createAudioResource(stream, { inlineVolume: true });
+    const resource = createAudioResource(stream, { 
+      inlineVolume: true,
+      inputType: stream.type || 'arbitrary'
+    });
     resource.volume.setVolume(0.1);
 
     this.resources.set(guildId, resource);
@@ -115,7 +142,6 @@ module.exports = class SoundModule {
 
   _cleanupConnection = (guildId) => {
     const player = this.players.get(guildId);
-
     if (player) player.stop();
 
     this.players.delete(guildId);
@@ -134,7 +160,6 @@ module.exports = class SoundModule {
   
     return this._playNextInQueue(guildId);
   };
-  
 
   monitorConnections = (client) => {
     setInterval(() => {
