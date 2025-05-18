@@ -1,12 +1,52 @@
+# Dependências
 node_modules/
-.vscode/
+package-lock.json
+yarn.lock
 
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Arquivos de ambiente e configuração
+.env
+.env.*
+config.json
 src/database/connection.json
 
-*.avi
-*.env
+# Logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de mídia
+*.avi
 *.mp3
 *.mp4
 *.wav
 *.webm
+*.ogg
+*.flac
+*.m4a
+
+# Arquivos temporários
+tmp/
+temp/
+.cache/
+
+# Arquivos de build
+dist/
+build/
+coverage/
+
+# Arquivos de debug
+.debug/
+debug.log
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
