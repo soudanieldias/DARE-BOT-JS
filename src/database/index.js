@@ -2,7 +2,7 @@
 const { Sequelize } = require('sequelize');
 const connection = require('./connection.json');
 const dotenv = require('dotenv');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 dotenv.config();
 
 const environment = process.env.DB_ENV || 'production';

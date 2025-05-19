@@ -8,7 +8,7 @@ const {
   entersState,
 } = require('@discordjs/voice');
 const play = require('play-dl');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 
 /**
  * @param {import('discord.js').Client} client

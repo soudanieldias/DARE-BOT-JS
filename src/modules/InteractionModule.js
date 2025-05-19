@@ -1,5 +1,5 @@
 const path = require('path');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 
 /**
  * @param {import('discord.js').Client} client

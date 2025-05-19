@@ -4,7 +4,7 @@ const { REST, Routes } = require('discord.js');
 const path = require('path');
 const config = require('../config.json');
 const fs = require('fs');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 
 class CommandLoaderModule {
   constructor() {

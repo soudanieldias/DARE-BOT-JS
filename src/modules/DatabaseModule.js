@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const { Guilds, Settings } = require('../database/models');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 
 class DatabaseModule {
   constructor(client) {

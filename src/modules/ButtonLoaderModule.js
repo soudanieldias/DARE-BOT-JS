@@ -1,6 +1,6 @@
 const { globSync } = require('glob');
 const path = require('path');
-const LoggerModule = require('../utils/LoggerModule');
+const LoggerModule = require('../utils/Logger');
 
 class ButtonLoaderModule {
   constructor() {
