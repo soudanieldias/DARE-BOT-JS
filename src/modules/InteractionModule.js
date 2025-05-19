@@ -1,5 +1,4 @@
-const path = require('path');
-const LoggerModule = require('../utils/Logger');
+const Logger = require('../utils/Logger');
 
 /**
  * @param {import('discord.js').Client} client
@@ -10,11 +9,7 @@ const LoggerModule = require('../utils/Logger');
 
 class InteractionModule {
   constructor() {
-    this.logger = new LoggerModule();
-  }
-
-  async handleError(error) {
-    await this.logger.error('InteractionModule', `Erro no arquivo: ${error}`);
+    this.logger = new Logger();
   }
 
   initialize(client, slashCommands) {
@@ -22,20 +17,45 @@ class InteractionModule {
 
     client.on('interactionCreate', async interaction => {
       try {
-        const { message, customId } = interaction;
+        // Log para debug
+        await this.logger.info(
+          'InteractionModule',
+          `Tipo de interação: ${interaction.type}`
+        );
 
+        // Tratamento de Select Menu
         if (interaction.isStringSelectMenu()) {
+          await this.logger.info(
+            'InteractionModule',
+            'Interação detectada: Select Menu'
+          );
           return await soundpadModule.listSoundpads(client, interaction);
         }
 
+        // Tratamento de Botões
         if (interaction.isButton()) {
-          if (message.content.includes('Lista de Áudios')) {
+          await this.logger.info(
+            'InteractionModule',
+            `Botão clicado: ${interaction.customId}`
+          );
+
+          // Verifica se é um botão do SoundPad
+          if (interaction.message?.content?.includes('Lista de Áudios')) {
             const soundpad = slashCommands.get('soundpad');
-            if (!soundpad)
-              return interaction.reply('ERRO: Ocorreu um erro com o SoundPad!');
+            if (!soundpad) {
+              await this.logger.error(
+                'InteractionModule',
+                'Comando soundpad não encontrado'
+              );
+              return interaction.reply({
+                content: 'ERRO: Ocorreu um erro com o SoundPad!',
+                ephemeral: true,
+              });
+            }
             return await soundpad.execute(client, interaction);
           }
 
+          // Tratamento dos botões de Ticket
           switch (interaction.customId) {
             case 'ticket-open':
               return await ticketModule.ticketOpen(client, interaction);
@@ -62,12 +82,21 @@ class InteractionModule {
               return await embedModule.send(client, interaction);
 
             default:
+              await this.logger.warn(
+                'InteractionModule',
+                `Botão não identificado: ${interaction.customId}`
+              );
               break;
           }
         }
 
+        // Tratamento de Modal Submit
         if (interaction.isModalSubmit()) {
-          switch (customId) {
+          await this.logger.info(
+            'InteractionModule',
+            `Modal submetido: ${interaction.customId}`
+          );
+          switch (interaction.customId) {
             case 'ticketmodal':
               return await ticketModule.ticketModal(client, interaction);
             default:
@@ -78,27 +107,35 @@ class InteractionModule {
           }
         }
 
+        // Tratamento de Comandos Slash
         if (interaction.isChatInputCommand()) {
+          await this.logger.info(
+            'InteractionModule',
+            `Comando executado: ${interaction.commandName}`
+          );
           const command = slashCommands.get(interaction.commandName);
 
-          if (!command)
-            return interaction.reply(
-              'Erro ao executar o comando: NÃO ENCONTRADO'
+          if (!command) {
+            await this.logger.error(
+              'InteractionModule',
+              `Comando ${interaction.commandName} não encontrado`
             );
-
-          switch (command) {
-            default:
-              return await command.execute(client, interaction, slashCommands);
+            return interaction.reply({
+              content: 'Erro ao executar o comando: NÃO ENCONTRADO',
+              ephemeral: true,
+            });
           }
+
+          return await command.execute(client, interaction);
         }
-      } catch (error) {
-        await this.handleError(error);
+      } catch (err) {
+        await this.logger.error(
+          'InteractionModule',
+          `Erro no arquivo: ${err.message}\nStack: ${err.stack}`
+        );
       }
     });
   }
 }
 
-module.exports = (client, slashCommands) => {
-  const interactionModule = new InteractionModule();
-  interactionModule.initialize(client, slashCommands);
-};
+module.exports = InteractionModule;

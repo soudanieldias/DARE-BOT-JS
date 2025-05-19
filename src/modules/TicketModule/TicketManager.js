@@ -8,12 +8,12 @@ const {
 } = require('discord.js');
 const discordTranscripts = require('discord-html-transcripts');
 const { TicketEmbed } = require('../embeds');
-const LoggerModule = require('../LoggerModule');
+const Logger = require('../../utils/Logger');
 
 class TicketManager {
   constructor(dbModule) {
     this.dbModule = dbModule;
-    this.logger = new LoggerModule();
+    this.logger = new Logger();
   }
 
   async openTicket(client, interaction) {

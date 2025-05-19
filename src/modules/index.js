@@ -7,7 +7,7 @@ const CommandLoaderModule = require('./CommandLoaderModule.js');
 const DatabaseModule = require('./DatabaseModule.js');
 const EmbedModule = require('./EmbedModule.js');
 const InteractionModule = require('./InteractionModule.js');
-const LoggerModule = require('../utils/Logger.js');
+const Logger = require('../utils/Logger.js');
 const MemeLoaderModule = require('./MemeLoaderModule.js');
 const OnReadyModule = require('./OnReadyModule.js');
 const OnVoiceModule = require('./OnVoiceModule.js');
@@ -25,7 +25,7 @@ module.exports = {
   EmbedModule,
   intentsList,
   InteractionModule,
-  LoggerModule,
+  Logger,
   MemeLoaderModule,
   OnReadyModule,
   OnVoiceModule,

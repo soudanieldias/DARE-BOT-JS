@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const { Client, Collection } = require('discord.js');
 const dotenv = require('dotenv');
-const LoggerModule = require('./utils/Logger.js');
+const Logger = require('./utils/Logger.js');
 
 const {
   ActivityModule,
@@ -47,9 +47,9 @@ class App {
   slashCommands = new Collection();
 
   /**
-   * @type {LoggerModule}
+   * @type {Logger}
    */
-  logger = new LoggerModule();
+  logger = new Logger();
 
   /**
    * Inicializa uma nova instância da aplicação
@@ -77,6 +77,7 @@ class App {
       this.client.ticketModule.initialize(this.client.database);
       this.client.embedModule = new EmbedModule();
       this.client.memeLoaderModule = new MemeLoaderModule();
+      this.client.interactionModule = new InteractionModule();
     } catch (error) {
       this.logger.error('App', `Erro ao inicializar módulos: ${error}`);
       throw error;
@@ -91,10 +92,13 @@ class App {
     try {
       this.initializeModules();
       ActivityModule.default(this.client);
-      InteractionModule(this.client, this.slashCommands);
+      this.client.interactionModule.initialize(
+        this.client,
+        this.client.commands
+      );
       OnReadyModule(this.client, this.TOKEN);
       OnVoiceModule(this.client);
-      new CommandLoaderModule().loadCommands(this.client);
+      await new CommandLoaderModule().loadCommands(this.client);
       new ButtonLoaderModule(this.client);
       this.client.soundpadModule.start(this.client);
     } catch (error) {

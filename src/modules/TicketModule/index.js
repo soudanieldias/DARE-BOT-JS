@@ -1,10 +1,12 @@
 const TicketManager = require('./TicketManager');
 const TicketConfig = require('./TicketConfig');
+const Logger = require('../../utils/Logger');
 
 class TicketModule {
   constructor() {
     this.ticketManager = null;
     this.ticketConfig = null;
+    this.logger = new Logger();
   }
 
   initialize(dbModule) {
@@ -49,7 +51,7 @@ class TicketModule {
   }
 
   async ticketTranscript(client, interaction) {
-    return await this.ticketManager.ticketTranscript(client, interaction);
+    return await this.ticketManager.generateTranscript(client, interaction);
   }
 }
 

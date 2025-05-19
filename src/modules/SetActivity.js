@@ -1,5 +1,5 @@
 const { ActivityType } = require('discord.js');
-const config = require('../config.json');
+const config = require('../config/config.json');
 
 module.exports = class SetActivity {
   static default(client) {

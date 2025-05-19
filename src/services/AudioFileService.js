@@ -1,9 +1,10 @@
 const { globSync } = require('glob');
-const LoggerModule = require('../utils/Logger');
+const Logger = require('../utils/Logger');
+const path = require('path');
 
 class AudioFileService {
   constructor() {
-    this.logger = new LoggerModule();
+    this.logger = new Logger();
   }
 
   async loadAudioFiles(client) {
@@ -12,23 +13,40 @@ class AudioFileService {
         'AudioFileService',
         'Carregando arquivos de áudio...'
       );
-      const audioFiles = globSync('./src/audios/**/*.mp3');
 
-      audioFiles.forEach(file => {
-        const fileName = file.split('/').pop().replace('.mp3', '');
+      // Limpa a coleção atual de pads
+      client.pads.clear();
 
-        if (!client.pads.has(fileName)) {
-          client.pads.set(fileName, {
-            name: fileName,
-            path: file,
-          });
-        } else {
-          this.logger.warn(
-            'AudioFileService',
-            `Arquivo de nome: "${fileName}" já existe na lista de áudios.\nIgnorando-o!\nPath: "${file}"`
-          );
+      // Carrega os arquivos de todas as categorias
+      const categories = [
+        './src/audios/audios/**/*.mp3',
+        './src/audios/frases/**/*.mp3',
+        './src/audios/memes/**/*.mp3',
+        './src/audios/musicas/**/*.mp3',
+        './src/audios/times/**/*.mp3',
+      ];
+
+      for (const pattern of categories) {
+        const audioFiles = globSync(pattern);
+
+        for (const file of audioFiles) {
+          const fileName = path.basename(file, '.mp3');
+          const category = path.basename(path.dirname(file));
+
+          if (!client.pads.has(fileName)) {
+            client.pads.set(fileName, {
+              name: fileName,
+              path: file,
+              category: category,
+            });
+          } else {
+            await this.logger.warn(
+              'AudioFileService',
+              `Arquivo de nome: "${fileName}" já existe na lista de áudios.\nIgnorando-o!\nPath: "${file}"`
+            );
+          }
         }
-      });
+      }
 
       await this.logger.info(
         'AudioFileService',

@@ -2,7 +2,9 @@
   "bot": {
     "presence": {
       "message": "AVE DARE!",
-      "type": "PLAYING"
+      "type": "PLAYING",
+      "status": "online",
+      "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     },
     "debug": false
   },
