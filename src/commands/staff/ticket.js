@@ -1,7 +1,4 @@
-const {
-  SlashCommandBuilder,
-  ChannelType,
-} = require('discord.js');
+const { SlashCommandBuilder, ChannelType } = require('discord.js');
 const { TicketModule } = require('../../modules');
 
 module.exports = {
@@ -9,11 +6,11 @@ module.exports = {
     .setName('ticket')
     .setDescription('Sistema de Ticket.')
     .setDMPermission(false)
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('config')
         .setDescription('Configure a funcionalidade de tickets')
-        .addChannelOption((option) =>
+        .addChannelOption(option =>
           option
             .setName('canal')
             .setDescription(
@@ -22,14 +19,14 @@ module.exports = {
             .addChannelTypes(ChannelType.GuildText)
             .setRequired(true)
         )
-        .addChannelOption((option) =>
+        .addChannelOption(option =>
           option
             .setName('logs')
             .setDescription('Canal que as logs será enviada.')
             .addChannelTypes(ChannelType.GuildText)
             .setRequired(true)
         )
-        .addChannelOption((option) =>
+        .addChannelOption(option =>
           option
             .setName('categoria')
             .addChannelTypes(ChannelType.GuildCategory)
@@ -38,42 +35,42 @@ module.exports = {
             )
             .setRequired(true)
         )
-        .addStringOption((option) =>
+        .addStringOption(option =>
           option
             .setName('botao')
             .setDescription('O nome do botão de abrir tickets.')
             .setRequired(true)
         )
-        .addRoleOption((option) =>
+        .addRoleOption(option =>
           option
             .setName('cargo')
             .setDescription('Cargo que podera ver os tickets.')
             .setRequired(true)
         )
     )
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('adduser')
         .setDescription('Adicione um membro a um ticket.')
-        .addUserOption((option) =>
+        .addUserOption(option =>
           option
             .setName('membro')
             .setDescription('Membro que será adicionado ao ticket.')
             .setRequired(true)
         )
     )
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('removeuser')
         .setDescription('Remova um membro do ticket.')
-        .addUserOption((option) =>
+        .addUserOption(option =>
           option
             .setName('membro')
             .setDescription('Membro que será removido do ticket.')
             .setRequired(true)
         )
     )
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('mencionar')
         .setDescription('Mencione o membro que abriu o ticket em seu privado.')

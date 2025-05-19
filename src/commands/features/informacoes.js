@@ -1,5 +1,9 @@
-const { AudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
-const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
+const {
+  AudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+} = require('@discordjs/voice');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -7,19 +11,26 @@ module.exports = {
     .setDescription('Reproduz as informações do servidor no canal de voz')
     .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands),
   category: 'features',
-	execute: async (_client, interaction) => {
-    const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator])
-  
+  execute: async (_client, interaction) => {
+    const hasAdminRole = interaction.memberPermissions?.has([
+      PermissionFlagsBits.Administrator,
+    ]);
+
     if (!hasAdminRole) return interaction.reply('Erro: Não Autorizado!!!');
 
     let player = new AudioPlayer();
 
     try {
-      const member = interaction.guild?.members.cache.get(interaction.member.user.id);
+      const member = interaction.guild?.members.cache.get(
+        interaction.member.user.id
+      );
       const channelId = member.voice.channelId;
       const guildId = interaction.guildId;
 
-      if (!channelId) return interaction.reply('Conecte-se a um canal de voz para ouvir as informações.');
+      if (!channelId)
+        return interaction.reply(
+          'Conecte-se a um canal de voz para ouvir as informações.'
+        );
 
       const connection = joinVoiceChannel({
         channelId,
@@ -34,9 +45,8 @@ module.exports = {
       await interaction.reply('Saudação reproduzida no canal de voz');
 
       await interaction.deleteReply();
-
     } catch (error) {
       console.error('[SERVER INFO]', error);
     }
-  }
+  },
 };

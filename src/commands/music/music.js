@@ -5,33 +5,33 @@ module.exports = {
     .setName('music')
     .setDescription('Sistema de Música DARE-Music')
     .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand
         .setName('play')
         .setDescription('Toca uma música')
-        .addStringOption((option) =>
+        .addStringOption(option =>
           option
             .setName('query')
             .setDescription('Nome ou link do Stream')
             .setRequired(true)
         )
     )
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand.setName('stop').setDescription('Stop a music')
     )
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand.setName('next').setDescription('Pula para a próxima música')
     )
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand
         .setName('queue')
         .setDescription('Mostra a fila atual de músicas')
     )
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand
         .setName('volume')
         .setDescription('Altera o volume da música')
-        .addIntegerOption((option) =>
+        .addIntegerOption(option =>
           option
             .setName('volume')
             .setDescription('Altere o Volume entre 0 e 100')
@@ -40,11 +40,11 @@ module.exports = {
             .setMaxValue(100)
         )
     )
-    .addSubcommand((subCommand) =>
+    .addSubcommand(subCommand =>
       subCommand
         .setName('playfile')
         .setDescription('Toca um áudio da internet (mp3, mp4, webm, ogg)')
-        .addStringOption((option) =>
+        .addStringOption(option =>
           option
             .setName('source')
             .setDescription('Link/Source do arquivo (mp3, mp4, webm, ogg)')

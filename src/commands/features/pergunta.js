@@ -24,7 +24,7 @@ function splitText(text, maxLength = 1024) {
   if (currentPart) parts.push(currentPart);
 
   return parts
-    .map((part) => {
+    .map(part => {
       if (part.length <= maxLength) return part;
 
       const words = part.split(' ');
@@ -50,7 +50,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('pergunta')
     .setDescription('Faz uma pergunta para o ChatGPT')
-    .addStringOption((option) =>
+    .addStringOption(option =>
       option.setName('ask').setDescription('Sua pergunta').setRequired(true)
     ),
   category: 'features',

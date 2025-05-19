@@ -6,7 +6,7 @@ module.exports = {
     .setName('avatar')
     .setDescription('Mostra o avatar do usuário')
     .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
-    .addUserOption((option) =>
+    .addUserOption(option =>
       option
         .setName('user')
         .setDescription('O usuário cujo avatar você quer ver')

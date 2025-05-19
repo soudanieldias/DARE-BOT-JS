@@ -5,34 +5,34 @@ module.exports = {
     .setName('cargo')
     .setDescription('Atribui ou remove um cargo')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('atribuir')
         .setDescription('Atribui um cargo a um usuário')
-        .addUserOption((option) =>
+        .addUserOption(option =>
           option
             .setName('usuario')
             .setDescription('O usuário para quem atribuir o cargo')
             .setRequired(true)
         )
-        .addRoleOption((option) =>
+        .addRoleOption(option =>
           option
             .setName('cargo')
             .setDescription('O cargo a ser atribuído')
             .setRequired(true)
         )
     )
-    .addSubcommand((subcommand) =>
+    .addSubcommand(subcommand =>
       subcommand
         .setName('remover')
         .setDescription('Remove um cargo de um usuário')
-        .addUserOption((option) =>
+        .addUserOption(option =>
           option
             .setName('usuario')
             .setDescription('O usuário de quem remover o cargo')
             .setRequired(true)
         )
-        .addRoleOption((option) =>
+        .addRoleOption(option =>
           option
             .setName('cargo')
             .setDescription('O cargo a ser removido')

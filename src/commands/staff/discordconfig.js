@@ -12,32 +12,30 @@ module.exports = {
     .setName('discordconfig')
     .setDescription('Configure o BOT em seu Discord')
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    .addRoleOption((role) =>
+    .addRoleOption(role =>
       role
         .setName('modrole')
         .setDescription('Cargo administrativo do BOT no Discord')
         .setRequired(true)
     )
-    .addChannelOption((channel) =>
+    .addChannelOption(channel =>
       channel
         .setName('staffchannel')
         .setDescription(
           'Canal staff onde as mensagens de Alerta serão enviadas'
         )
     )
-    .addChannelOption((channel) =>
+    .addChannelOption(channel =>
       channel
         .setName('announcechannel')
         .setDescription(
           'Canal onde os anúncios programados do BOT serão enviados'
         )
     )
-    .addChannelOption((channel) =>
+    .addChannelOption(channel =>
       channel
         .setName('suggestionschannel')
-        .setDescription(
-          'Canal onde as sugestões serão enviados'
-        )
+        .setDescription('Canal onde as sugestões serão enviados')
     ),
   category: 'staff',
   /**
@@ -52,7 +50,6 @@ module.exports = {
         PermissionFlagsBits.Administrator,
       ]);
 
-      
       if (!hasAdminRole) {
         return interaction.reply({
           content: 'ERRO: Comando disponível apenas para Staff!',
@@ -63,7 +60,8 @@ module.exports = {
       const modRole = interaction.options.getRole('modrole');
       const staffChannel = interaction.options.getChannel('staffchannel');
       const announcechannel = interaction.options.getChannel('announcechannel');
-      const suggestionsChannel = interaction.options.getChannel('suggestionschannel');
+      const suggestionsChannel =
+        interaction.options.getChannel('suggestionschannel');
 
       const embed = new EmbedBuilder()
         .setTitle('Resumo das configurações')
@@ -80,16 +78,16 @@ module.exports = {
         .setThumbnail(interaction.guild.iconURL())
         .setColor('#ffffff');
 
-        await Settings.findOrCreate({
-          where: { id: interaction.guild.id },
-          defaults: {
-            owner: interaction.guild.ownerId,
-            staffChannelId: staffChannel.id,
-            announcesChannelId: announcechannel.id,
-            suggestionsChannelId: suggestionsChannel.id,
-            modRoleId: modRole.id,
-          },
-        });
+      await Settings.findOrCreate({
+        where: { id: interaction.guild.id },
+        defaults: {
+          owner: interaction.guild.ownerId,
+          staffChannelId: staffChannel.id,
+          announcesChannelId: announcechannel.id,
+          suggestionsChannelId: suggestionsChannel.id,
+          modRoleId: modRole.id,
+        },
+      });
 
       await interaction.reply({ embeds: [embed] });
     } catch (error) {

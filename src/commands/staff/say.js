@@ -7,24 +7,28 @@ module.exports = {
     .setName('say')
     .setDescription('Transmite uma mensagem para o canal informado')
     // .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-    .addChannelOption(channel => (
-      channel.setName('channel')
-      .setDescription('Canal onde deseja enviar a Mensagem')
-      .setRequired(true)
-    ))
-    .addStringOption(message => (
-      message.setName('message')
-      .setDescription('Mensagem que será enviada no canal Selecionado')
-      .setRequired(true)
-    )),
+    .addChannelOption(channel =>
+      channel
+        .setName('channel')
+        .setDescription('Canal onde deseja enviar a Mensagem')
+        .setRequired(true)
+    )
+    .addStringOption(message =>
+      message
+        .setName('message')
+        .setDescription('Mensagem que será enviada no canal Selecionado')
+        .setRequired(true)
+    ),
   category: 'staff',
   /**
    *
    * @param {import('discord.js').ChatInputCommandInteraction} interaction
    */
-	async execute (_client, interaction) {
+  async execute(_client, interaction) {
     try {
-      const hasAdminRole = interaction.memberPermissions?.has([PermissionFlagsBits.Administrator]);
+      const hasAdminRole = interaction.memberPermissions?.has([
+        PermissionFlagsBits.Administrator,
+      ]);
       if (!hasAdminRole) return interaction.reply('Erro: Não Autorizado!!!');
 
       const CHANNEL_ID = interaction.options.get('channel')?.value;
@@ -33,11 +37,13 @@ module.exports = {
       const channel = await interaction.guild?.channels.fetch(`${CHANNEL_ID}`);
 
       await channel.send(`${MESSAGE_CONTENT}`);
-      
-      return interaction.reply({ content: 'Mensagem enviada com Sucesso!', ephemeral: true });
 
+      return interaction.reply({
+        content: 'Mensagem enviada com Sucesso!',
+        ephemeral: true,
+      });
     } catch (error) {
       console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
     }
-  }
+  },
 };

@@ -7,9 +7,11 @@ module.exports = {
     .setDescription('Mostra o perfil do usuário')
     .setDefaultMemberPermissions(PermissionFlagsBits.UseApplicationCommands)
     .addUserOption(option =>
-      option.setName('user')
+      option
+        .setName('user')
         .setDescription('O usuário cujo perfil você quer ver')
-        .setRequired(false)),
+        .setRequired(false)
+    ),
   category: 'features',
   /**
    *
@@ -29,13 +31,21 @@ module.exports = {
       .addFields(
         { name: 'Nome do Usuário: ', value: `${user.username}` },
         { name: 'Menção do usuário: ', value: `<@!${user.id}>` },
-        { name: 'Location: ', value: `${interaction.guild?.preferredLocale}`, inline: true },
-        { name: 'Created', value: `${interaction.guild.createdAt.toLocaleString()}`, inline: true },
+        {
+          name: 'Location: ',
+          value: `${interaction.guild?.preferredLocale}`,
+          inline: true,
+        },
+        {
+          name: 'Created',
+          value: `${interaction.guild.createdAt.toLocaleString()}`,
+          inline: true,
+        }
       )
       .setTimestamp()
       .setFooter({
         text: `${client.user.username}`,
-        iconURL: `${client.user.avatarURL()}`
+        iconURL: `${client.user.avatarURL()}`,
       });
 
     return await interaction.reply({ embeds: [embed] });

@@ -11,12 +11,12 @@ module.exports = {
    * @param {import('discord.js').Client} client
    * @param {import('discord.js').ChatInputCommandInteraction} interaction
    */
-	execute: async (client, interaction) => {
+  execute: async (client, interaction) => {
     try {
       const memeFile = client.memeLoaderModule.getRandomMeme();
       return await interaction.reply({ files: [memeFile] });
     } catch (error) {
       console.error('[SERVER INFO]', error);
     }
-  }
+  },
 };
