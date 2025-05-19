@@ -76,7 +76,7 @@ class App {
       throw error;
     }
   }
-  
+
   /**
    * Inicia a aplicação e carrega todos os módulos necessários
    * @throws {Error} Se houver erro durante a inicialização
