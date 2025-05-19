@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const { Client, Collection } = require('discord.js');
 const dotenv = require('dotenv');
+const LoggerModule = require('./utils/LoggerModule');
 
 const {
   ActivityModule,
@@ -46,6 +47,11 @@ class App {
   slashCommands = new Collection();
 
   /**
+   * @type {LoggerModule}
+   */
+  logger = new LoggerModule();
+
+  /**
    * Inicializa uma nova instância da aplicação
    * @throws {Error} Se o TOKEN não estiver configurado
    */
@@ -53,8 +59,7 @@ class App {
     if (!this.TOKEN) {
       throw new Error('TOKEN não configurado no arquivo .env');
     }
-
-    this.initializeModules();
+    this.client.commands = new Collection();
   }
 
   /**
@@ -72,7 +77,7 @@ class App {
       this.client.embedModule = new EmbedModule();
       this.client.memeLoaderModule = new MemeLoaderModule();
     } catch (error) {
-      console.error('Erro ao inicializar módulos:', error);
+      this.logger.error('App', `Erro ao inicializar módulos: ${error}`);
       throw error;
     }
   }
@@ -81,17 +86,18 @@ class App {
    * Inicia a aplicação e carrega todos os módulos necessários
    * @throws {Error} Se houver erro durante a inicialização
    */
-  start() {
+  async start() {
     try {
+      this.initializeModules();
       ActivityModule.default(this.client);
       InteractionModule(this.client, this.slashCommands);
       OnReadyModule(this.client, this.TOKEN);
       OnVoiceModule(this.client);
-      CommandLoaderModule(this.client, this.slashCommands);
-      ButtonLoaderModule(this.client);
+      new CommandLoaderModule().loadCommands(this.client);
+      new ButtonLoaderModule(this.client);
       this.client.soundpadModule.start(this.client);
     } catch (error) {
-      console.error('Erro ao iniciar a aplicação:', error);
+      await this.logger.error('App', `Erro ao iniciar a aplicação: ${error}`);
       throw error;
     }
   }

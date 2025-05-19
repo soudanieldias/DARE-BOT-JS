@@ -1,30 +1,37 @@
-/* eslint-disable no-undef */
 const { globSync } = require('glob');
 const path = require('path');
+const LoggerModule = require('../utils/LoggerModule');
 
-module.exports = async (client) => {
-  try {
-    console.log('[Botões] Carregando módulo de Botões.');
-    const buttonFiles = globSync('./src/buttons/**/*.js');
-    
-    for (const file of buttonFiles) {
-      const button = require(`../../${file}`);
-      const { data } = button;
-      if (!data.customId) return;
+class ButtonLoaderModule {
+  constructor() {
+    this.logger = new LoggerModule();
+  }
 
-      const btn = client.buttons?.get(data.customId);
-      if (btn) {
-        console.error(`[Erro] Já existe um botão carregado com o mesmo ID: ${data.customId}`);
-        continue;
+  async loadButtons(client) {
+    try {
+      await this.logger.info('Buttons', 'Carregando módulo de Botões.');
+      const buttonFiles = globSync('./src/buttons/**/*.js');
+
+      for (const file of buttonFiles) {
+        const button = require(`../../${file}`);
+        const { customId } = button.data;
+
+        if (client.buttons.has(customId)) {
+          await this.logger.error(
+            'Buttons',
+            `Já existe um botão carregado com o mesmo ID: ${customId}`
+          );
+          return;
+        }
+
+        client.buttons.set(customId, button);
       }
 
-      delete require.cache[require.resolve(`../../${file}`)];
-
-      client.buttons.set(data.customId, button);
+      await this.logger.info('Buttons', 'Botões carregados com Sucesso.');
+    } catch (error) {
+      await this.logger.error('Buttons', `Erro no arquivo: ${error}`);
     }
-
-    console.log('[Botões] Botões carregados com Sucesso.');
-  } catch (error) {
-    console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
   }
 }
+
+module.exports = ButtonLoaderModule;

@@ -1,21 +1,26 @@
 /* eslint-disable no-undef */
 const { Guilds, Settings } = require('../database/models');
-const path = require('path');
+const LoggerModule = require('../utils/LoggerModule');
 
 class DatabaseModule {
-  async databaseHandler(client) {
+  constructor(client) {
+    this.client = client;
+    this.logger = new LoggerModule();
+  }
+
+  async initialize() {
     try {
-      console.log('[DataBase] Inicializando...');
-      await this.populateServers(client);
-      console.log('[DataBase] Inicializada com sucesso.');
+      await this.logger.info('Database', 'Inicializando...');
+      await this.populateServers();
+      await this.logger.info('Database', 'Inicializada com sucesso.');
     } catch (error) {
-      console.error(`Erro ${path.basename(__filename)}: ${error}`);
+      await this.logger.error('Database', `Erro: ${error}`);
     }
   }
 
-  async populateServers(client) {
+  async populateServers() {
     try {
-      const servers = await client.guilds.cache.map((guild) => ({
+      const servers = await this.client.guilds.cache.map(guild => ({
         id: guild.id,
         name: guild.name,
         iconURL: guild.icon,
@@ -28,9 +33,12 @@ class DatabaseModule {
         });
       }
 
-      console.log('[Database] Guildas populadas no banco de dados com sucesso.');
+      await this.logger.info(
+        'Database',
+        'Guildas populadas no banco de dados com sucesso.'
+      );
     } catch (error) {
-      console.error(`Erro ${path.basename(__filename)}: ${error}`);
+      await this.logger.error('Database', `Erro: ${error}`);
     }
   }
 
@@ -49,7 +57,7 @@ class DatabaseModule {
         return ticketSettings;
       }
     } catch (error) {
-      console.error(`Erro ${path.basename(__filename)}: ${error}`);
+      await this.logger.error('Database', `Erro: ${error}`);
     }
   }
 
@@ -63,10 +71,13 @@ class DatabaseModule {
 
       return ticketChannelData;
     } catch (error) {
-      console.error(`[${path.basename(__filename)}] Erro no arquivo: ${error}`);
+      await this.logger.error('Database', `Erro no arquivo: ${error}`);
     }
   }
-}
 
+  async handleError(error) {
+    await this.logger.error('Database', `Erro no arquivo: ${error}`);
+  }
+}
 
 module.exports = DatabaseModule;

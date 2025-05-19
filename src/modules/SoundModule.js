@@ -5,9 +5,10 @@ const {
   VoiceConnectionStatus,
   AudioPlayerStatus,
   NoSubscriberBehavior,
-  entersState
+  entersState,
 } = require('@discordjs/voice');
 const play = require('play-dl');
+const LoggerModule = require('../utils/LoggerModule');
 
 /**
  * @param {import('discord.js').Client} client
@@ -19,6 +20,7 @@ module.exports = class SoundModule {
     this.connections = new Map();
     this.resources = new Map();
     this.queues = new Map();
+    this.logger = new LoggerModule();
   }
 
   playSound = async (client, interaction, stream, connectionParams) => {
@@ -30,29 +32,29 @@ module.exports = class SoundModule {
     if (!player) {
       player = createAudioPlayer({
         behaviors: {
-          noSubscriber: NoSubscriberBehavior.Play
-        }
+          noSubscriber: NoSubscriberBehavior.Play,
+        },
       });
       this.players.set(guildId, player);
-      
+
       player.on(AudioPlayerStatus.Idle, () => {
         this._playNextInQueue(guildId);
       });
     }
-    
+
     let connection = this.connections.get(guildId);
-    
+
     if (connection) {
       const currentChannel = connection.joinConfig.channelId;
       const botChannel = member.guild.channels.cache.get(currentChannel);
-      
+
       if (
         connection.joinConfig.channelId !== member.voice.channel.id &&
         botChannel.members.size > 1
       ) {
         return interaction.reply({
           content: 'O bot já está conectado a outro canal de voz.',
-          ephemeral: true
+          ephemeral: true,
         });
       }
     }
@@ -76,15 +78,18 @@ module.exports = class SoundModule {
     });
 
     // Se for uma URL do YouTube, usa o play-dl para obter o stream
-    if (typeof stream === 'string' && (stream.includes('youtube.com') || stream.includes('youtu.be'))) {
+    if (
+      typeof stream === 'string' &&
+      (stream.includes('youtube.com') || stream.includes('youtu.be'))
+    ) {
       try {
         const streamInfo = await play.stream(stream);
         stream = streamInfo.stream;
       } catch (error) {
-        console.error('Erro ao obter stream do YouTube:', error);
+        await this.handleError(error);
         return interaction.reply({
           content: 'Erro ao reproduzir o vídeo do YouTube.',
-          ephemeral: true
+          ephemeral: true,
         });
       }
     }
@@ -105,7 +110,7 @@ module.exports = class SoundModule {
     queue.push(stream);
   };
 
-  _playNextInQueue = (guildId) => {
+  _playNextInQueue = guildId => {
     const queue = this.queues.get(guildId);
     if (!queue || queue.length === 0) {
       return;
@@ -119,9 +124,9 @@ module.exports = class SoundModule {
       return;
     }
 
-    const resource = createAudioResource(stream, { 
+    const resource = createAudioResource(stream, {
       inlineVolume: true,
-      inputType: stream.type || 'arbitrary'
+      inputType: stream.type || 'arbitrary',
     });
     resource.volume.setVolume(0.1);
 
@@ -131,7 +136,7 @@ module.exports = class SoundModule {
     player.play(resource);
   };
 
-  stopSound = async (guildId) => {
+  stopSound = async guildId => {
     this._cleanupConnection(guildId);
   };
 
@@ -140,7 +145,7 @@ module.exports = class SoundModule {
     if (resource) resource.volume?.setVolume(volume);
   };
 
-  _cleanupConnection = (guildId) => {
+  _cleanupConnection = guildId => {
     const player = this.players.get(guildId);
     if (player) player.stop();
 
@@ -150,18 +155,18 @@ module.exports = class SoundModule {
     this.queues.delete(guildId);
   };
 
-  skip = (guildId) => {
+  skip = guildId => {
     const player = this.players.get(guildId);
     const queue = this.queues.get(guildId);
-  
+
     if (!player || !queue || queue.length === 0) {
       return;
     }
-  
+
     return this._playNextInQueue(guildId);
   };
 
-  monitorConnections = (client) => {
+  monitorConnections = client => {
     setInterval(() => {
       this.connections.forEach((connection, guildId) => {
         const guild = client.guilds.cache.get(guildId);
@@ -172,4 +177,11 @@ module.exports = class SoundModule {
       });
     }, 30000);
   };
+
+  async handleError(error) {
+    await this.logger.error(
+      'SoundModule',
+      `Erro ao obter stream do YouTube: ${error}`
+    );
+  }
 };
