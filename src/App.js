@@ -74,6 +74,7 @@ class App {
       this.client.soundModule = new SoundModule();
       this.client.soundpadModule = new SoundpadModule();
       this.client.ticketModule = new TicketModule();
+      this.client.ticketModule.initialize(this.client.database);
       this.client.embedModule = new EmbedModule();
       this.client.memeLoaderModule = new MemeLoaderModule();
     } catch (error) {

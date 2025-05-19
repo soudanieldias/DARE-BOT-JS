@@ -5,7 +5,7 @@ const {
   ButtonBuilder,
 } = require('discord.js');
 const { Settings } = require('../../database/models');
-const ticketModal = require('../modals/ticketmodal');
+const { TicketModal } = require('../modals');
 
 class TicketConfig {
   constructor(dbModule) {
@@ -35,7 +35,7 @@ class TicketConfig {
         updatedAt: new Date(),
       });
 
-      return await interaction.showModal(ticketModal);
+      return await interaction.showModal(TicketModal);
     } catch (error) {
       console.error(error);
     }
