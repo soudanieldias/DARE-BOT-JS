@@ -13,7 +13,7 @@ const OnReadyModule = require('./OnReadyModule.js');
 const OnVoiceModule = require('./OnVoiceModule.js');
 const SoundModule = require('./SoundModule.js');
 const SoundpadModule = require('./SoundpadModule.js');
-const TicketModule = require('./TicketModule.js');
+const TicketModule = require('./TicketModule/index.js');
 
 module.exports = {
   ActivityModule,
