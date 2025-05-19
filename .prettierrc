@@ -7,7 +7,17 @@
   "useTabs": false,
   "bracketSpacing": true,
   "arrowParens": "avoid",
-  "endOfLine": "lf",
+  "endOfLine": "auto",
   "bracketSameLine": false,
-  "proseWrap": "preserve"
+  "proseWrap": "preserve",
+  "singleAttributePerLine": true,
+  "overrides": [
+    {
+      "files": ["src/commands/**/*.js", "src/modules/**/*.js"],
+      "options": {
+        "singleAttributePerLine": true,
+        "bracketSameLine": false
+      }
+    }
+  ]
 }
