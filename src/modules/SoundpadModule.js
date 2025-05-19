@@ -1,11 +1,11 @@
 const ButtonModule = require('./ButtonModule.js');
 const AudioFileService = require('../services/AudioFileService');
 const DiscordInteractionService = require('../services/DiscordInteractionService');
-const LoggerModule = require('./LoggerModule');
+const LoggerModule = require('../utils/LoggerModule');
 const {
   soundpadCategories,
   categoryOptions,
-} = require('../config/soundpadCategories');
+} = require('../config/soundpad.config');
 
 class SoundpadModule {
   static categories = categoryOptions;

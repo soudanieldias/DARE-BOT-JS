@@ -1,5 +1,5 @@
 const { globSync } = require('glob');
-const LoggerModule = require('../modules/LoggerModule');
+const LoggerModule = require('../utils/LoggerModule');
 
 class AudioFileService {
   constructor() {

@@ -1,4 +1,4 @@
-const LoggerModule = require('../modules/LoggerModule');
+const LoggerModule = require('../utils/LoggerModule');
 
 class DiscordInteractionService {
   constructor(buttonModule) {
