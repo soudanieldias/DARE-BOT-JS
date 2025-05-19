@@ -5,9 +5,9 @@
  * @param {import('discord.js').VoiceState} oldMember
  * @param {import('discord.js').VoiceState} newMember
  */
-module.exports = async (client) => {
+module.exports = async client => {
   client.on('voiceStateUpdate', async (oldMember, newMember) => {
-    if(newMember.channelId === '000') {
+    if (newMember.channelId === '000') {
       //'1178350850884776008') {
       // const memberData = await newMember.guild.members.fetch(`${newMember.id}`);
       // const textMessage = `Olá, ${memberData.user.username}. Bem-vindo ao canal de suporte da ${newMember.guild.name}`;
@@ -19,7 +19,12 @@ module.exports = async (client) => {
         adapterCreator: newMember.guild.voiceAdapterCreator,
       };
 
-      await client.soundModule.playSound(client, newMember, ttsStream, connectionParams);
+      await client.soundModule.playSound(
+        client,
+        newMember,
+        ttsStream,
+        connectionParams
+      );
     }
   });
-}
+};

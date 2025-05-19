@@ -104,14 +104,78 @@ class TicketManager {
   }
 
   async closeTicket(client, interaction) {
-    const guildData = await this.dbModule.getGuildData(interaction.guildId);
-    const embed = TicketEmbed.buildClosedTicketEmbed(interaction, guildData);
-    const buttons = TicketEmbed.buildTicketButtons('closed');
+    try {
+      const channel = interaction.channel;
+      const userId = channel.topic;
+      const guildData = await this.dbModule.getGuildData(interaction.guildId);
 
-    await interaction.reply({
-      embeds: [embed],
-      components: [buttons],
-    });
+      if (!userId) {
+        throw new Error('ID do usuário não encontrado no topic do canal');
+      }
+
+      // Atualiza as permissões do usuário
+      await channel.permissionOverwrites.edit(userId, {
+        ViewChannel: false,
+      });
+
+      // Atualiza as permissões do cargo de staff
+      await channel.permissionOverwrites.edit(guildData.ticketRoleId, {
+        ViewChannel: true,
+        SendMessages: true,
+        AttachFiles: true,
+        EmbedLinks: true,
+        AddReactions: true,
+      });
+
+      // Atualiza as permissões do @everyone
+      await channel.permissionOverwrites.edit(interaction.guild.id, {
+        ViewChannel: false,
+      });
+
+      // Cria o embed de ticket fechado
+      const ticketClosedEmbed = new EmbedBuilder()
+        .setColor('#2f3136')
+        .setAuthor({
+          name: guildData.ticketTitle,
+          iconURL: interaction.guild.iconURL({ dynamic: true }),
+        })
+        .setDescription('Ticket fechado, escolha uma ação abaixo.')
+        .setFooter({
+          text: interaction.guild.name,
+          iconURL: interaction.guild.iconURL({ dynamic: true }),
+        });
+
+      // Cria os botões
+      const reopenButton = new ButtonBuilder()
+        .setCustomId('ticket-reopen')
+        .setStyle(ButtonStyle.Primary)
+        .setLabel('Reabrir Ticket');
+
+      const transcriptButton = new ButtonBuilder()
+        .setCustomId('ticket-transcript')
+        .setStyle(ButtonStyle.Danger)
+        .setLabel('Transcrever Ticket');
+
+      const buttonsRow = new ActionRowBuilder().addComponents(
+        reopenButton,
+        transcriptButton
+      );
+
+      // Envia a mensagem com os botões
+      await interaction.reply({
+        embeds: [ticketClosedEmbed],
+        components: [buttonsRow],
+      });
+    } catch (error) {
+      this.logger.error(
+        'TicketManager',
+        `Erro ao fechar ticket: ${error.message}`
+      );
+      await interaction.reply({
+        content: '❌ Erro ao fechar o ticket. Por favor, tente novamente.',
+        ephemeral: true,
+      });
+    }
   }
 
   async reopenTicket(client, interaction) {
@@ -169,78 +233,97 @@ class TicketManager {
   }
 
   async generateTranscript(client, interaction) {
-    const { channel, user } = interaction;
-
-    const attachment = await discordTranscripts.createTranscript(
-      interaction.channel
-    );
-
-    interaction.channel.delete();
-
-    const embed = new EmbedBuilder()
-      .setDescription(
-        `Ticket de <@${channel.topic}>\`(${channel.topic})\` \n Deletado por ${user}\`(${user.id})\``
-      )
-      .setColor('#2f3136')
-      .setTimestamp();
-
-    const guildData = await this.dbModule.getGuildData(interaction.guildId);
-    const logsChannel = interaction.guild.channels.cache.get(
-      guildData.ticketLogsChannelId
-    );
-
-    logsChannel.send({ embeds: [embed], files: [attachment] });
-  }
-
-  async ticketMentionUser(client, interaction) {
-    const {
-      channel: { topic, url },
-      guild,
-    } = interaction;
-
     try {
-      const validUser = await guild.members.fetch(topic);
+      const channel = interaction.channel;
+      const userId = channel.topic;
 
-      if (!topic || !validUser) {
-        return interaction.reply({
-          content:
-            'Este canal não é um ticket, ou o usuário não se encontra mais no servidor.',
+      if (!userId) {
+        throw new Error('ID do usuário não encontrado no topic do canal');
+      }
+
+      // Enviar mensagem de countdown
+      const countdownMsg = await interaction.reply({
+        content: '🔄 Gerando transcript e fechando ticket em 5 segundos...',
+        ephemeral: true,
+      });
+
+      // Countdown de 5 segundos
+      for (let i = 4; i > 0; i--) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await countdownMsg.edit({
+          content: `🔄 Gerando transcript e fechando ticket em ${i} segundos...`,
           ephemeral: true,
         });
       }
 
-      const mentionEmbed = new EmbedBuilder()
-        .setColor('#0099ff')
-        .setTitle('Ticket Aberto')
-        .setDescription(
-          `Olá ${validUser.user.tag}, você possui um ticket em aberto no servidor ${interaction.guild.name}, no qual foi mencionado.`
-        )
-        .addFields([
-          { name: 'Canal do ticket:', value: `<#${interaction.channel.id}>` },
-        ])
-        .setTimestamp();
-
-      const mentionButton = new ButtonBuilder()
-        .setLabel('Ir para o ticket')
-        .setURL(url)
-        .setStyle(ButtonStyle.Link);
-
-      const mentionRow = new ActionRowBuilder().addComponents(mentionButton);
-
-      await validUser.send({
-        content: `Olá ${validUser.user}, você possui um ticket em aberto no qual foi mencionado:`,
-        embeds: [mentionEmbed],
-        components: [mentionRow],
+      // Gerar transcript
+      const attachment = await discordTranscripts.createTranscript(channel, {
+        limit: -1,
+        filename: `transcript-${channel.name}.html`,
+        poweredBy: false,
+        hydrate: true,
       });
 
-      return interaction.reply({
-        content: 'O usuário foi mencionado',
+      // Enviar mensagem final
+      await countdownMsg.edit({
+        content: '✅ Gerando transcript e fechando ticket agora...',
         ephemeral: true,
       });
+
+      // Aguardar 1 segundo antes de fechar
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Obter dados do servidor
+      const guildData = await this.dbModule.getGuildData(interaction.guildId);
+      const logsChannel = interaction.guild.channels.cache.get(
+        guildData.ticketLogsChannelId
+      );
+
+      if (logsChannel) {
+        // Criar embed para o canal de logs
+        const embed = new EmbedBuilder()
+          .setColor('#2f3136')
+          .setTitle('Transcript de Ticket')
+          .setDescription(
+            `Ticket de <@${userId}> fechado por ${interaction.user.tag}`
+          )
+          .setTimestamp();
+
+        // Enviar transcript para o canal de logs
+        await logsChannel.send({
+          embeds: [embed],
+          files: [attachment],
+        });
+      } else {
+        this.logger.error('TicketManager', 'Canal de logs não encontrado');
+      }
+
+      // Fechar o canal
+      await channel.delete();
     } catch (error) {
-      this.logger.error('Erro ao mencionar usuário:', error);
-      return interaction.reply({
-        content: 'Não foi possível mencionar o usuário.',
+      this.logger.error(
+        'TicketManager',
+        `Erro ao gerar transcript: ${error.message}`
+      );
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({
+          content: '❌ Erro ao gerar transcript. Por favor, tente novamente.',
+          ephemeral: true,
+        });
+      }
+    }
+  }
+
+  async ticketMentionUser(client, interaction) {
+    const {
+      channel: { topic },
+      guild,
+    } = interaction;
+
+    const user = await guild.members.fetch(topic);
+    if (user) {
+      await interaction.reply({
+        content: `<@!${topic}>`,
         ephemeral: true,
       });
     }

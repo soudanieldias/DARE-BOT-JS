@@ -5,10 +5,7 @@ const {
   VoiceConnectionStatus,
   AudioPlayerStatus,
   NoSubscriberBehavior,
-  entersState,
 } = require('@discordjs/voice');
-const play = require('play-dl');
-const LoggerModule = require('../utils/Logger');
 
 /**
  * @param {import('discord.js').Client} client
@@ -19,8 +16,7 @@ module.exports = class SoundModule {
     this.players = new Map();
     this.connections = new Map();
     this.resources = new Map();
-    this.queues = new Map();
-    this.logger = new LoggerModule();
+    this.volumes = new Map();
   }
 
   playSound = async (client, interaction, stream, connectionParams) => {
@@ -36,10 +32,6 @@ module.exports = class SoundModule {
         },
       });
       this.players.set(guildId, player);
-
-      player.on(AudioPlayerStatus.Idle, () => {
-        this._playNextInQueue(guildId);
-      });
     }
 
     let connection = this.connections.get(guildId);
@@ -47,15 +39,13 @@ module.exports = class SoundModule {
     if (connection) {
       const currentChannel = connection.joinConfig.channelId;
       const botChannel = member.guild.channels.cache.get(currentChannel);
-
       if (
         connection.joinConfig.channelId !== member.voice.channel.id &&
-        botChannel.members.size > 1
+        !botChannel.members.size === 1
       ) {
-        return interaction.reply({
-          content: 'O bot já está conectado a outro canal de voz.',
-          ephemeral: true,
-        });
+        return interaction.reply(
+          'O bot já está conectado a outro canal de voz.'
+        );
       }
     }
 
@@ -64,11 +54,9 @@ module.exports = class SoundModule {
 
     connection.on(VoiceConnectionStatus.Disconnected, async () => {
       try {
-        await Promise.race([
-          entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-          entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
-        ]);
-      } catch {
+        this._cleanupConnection(guildId);
+      } catch (error) {
+        console.error(error);
         this._cleanupConnection(guildId);
       }
     });
@@ -77,63 +65,26 @@ module.exports = class SoundModule {
       this._cleanupConnection(guildId);
     });
 
-    // Se for uma URL do YouTube, usa o play-dl para obter o stream
-    if (
-      typeof stream === 'string' &&
-      (stream.includes('youtube.com') || stream.includes('youtu.be'))
-    ) {
-      try {
-        const streamInfo = await play.stream(stream);
-        stream = streamInfo.stream;
-      } catch (error) {
-        await this.handleError(error);
-        return interaction.reply({
-          content: 'Erro ao reproduzir o vídeo do YouTube.',
-          ephemeral: true,
-        });
-      }
-    }
-
-    this._enqueue(guildId, stream);
-
-    if (player.state.status !== AudioPlayerStatus.Playing) {
-      this._playNextInQueue(guildId);
-    }
-  };
-
-  _enqueue = (guildId, stream) => {
-    if (!this.queues.has(guildId)) {
-      this.queues.set(guildId, []);
-    }
-
-    const queue = this.queues.get(guildId);
-    queue.push(stream);
-  };
-
-  _playNextInQueue = guildId => {
-    const queue = this.queues.get(guildId);
-    if (!queue || queue.length === 0) {
-      return;
-    }
-
-    const stream = queue.shift();
-
-    const player = this.players.get(guildId);
-    const connection = this.connections.get(guildId);
-    if (!player || !connection) {
-      return;
-    }
-
     const resource = createAudioResource(stream, {
       inlineVolume: true,
-      inputType: stream.type || 'arbitrary',
+      inputType: 'file',
     });
-    resource.volume.setVolume(0.1);
 
+    const savedVolume = this.volumes.get(guildId) || 0.1;
+    resource.volume.setVolume(savedVolume);
     this.resources.set(guildId, resource);
 
-    connection.subscribe(player);
-    player.play(resource);
+    player.on(AudioPlayerStatus.Idle, () => {
+      this._cleanupConnection(guildId);
+    });
+
+    player.on('error', error => {
+      console.error('Erro no player:', error);
+      this._cleanupConnection(guildId);
+    });
+
+    await connection.subscribe(player);
+    return await player.play(resource);
   };
 
   stopSound = async guildId => {
@@ -142,28 +93,22 @@ module.exports = class SoundModule {
 
   changeVolume = async (guildId, volume) => {
     const resource = this.resources.get(guildId);
-    if (resource) resource.volume?.setVolume(volume);
+    if (resource) {
+      resource.volume?.setVolume(volume);
+      this.volumes.set(guildId, volume);
+    }
   };
 
   _cleanupConnection = guildId => {
     const player = this.players.get(guildId);
-    if (player) player.stop();
+
+    if (player) {
+      player.stop();
+    }
 
     this.players.delete(guildId);
     this.connections.delete(guildId);
     this.resources.delete(guildId);
-    this.queues.delete(guildId);
-  };
-
-  skip = guildId => {
-    const player = this.players.get(guildId);
-    const queue = this.queues.get(guildId);
-
-    if (!player || !queue || queue.length === 0) {
-      return;
-    }
-
-    return this._playNextInQueue(guildId);
   };
 
   monitorConnections = client => {
@@ -177,11 +122,4 @@ module.exports = class SoundModule {
       });
     }, 30000);
   };
-
-  async handleError(error) {
-    await this.logger.error(
-      'SoundModule',
-      `Erro ao obter stream do YouTube: ${error}`
-    );
-  }
 };

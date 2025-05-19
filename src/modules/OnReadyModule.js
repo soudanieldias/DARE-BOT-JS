@@ -1,40 +1,35 @@
-const LoggerModule = require('../utils/Logger');
+const Logger = require('../utils/Logger');
 
 /**
  *
  * @param {import('discord.js').Client} client
- * @param {import('discord.js').ChatInputCommandInteraction} interaction
+ * @param {string} token
  */
-class OnReadyModule {
-  constructor() {
-    this.logger = new LoggerModule();
-  }
-
-  async handleReady(client) {
-    const discriminator = client.user.discriminator;
-    await this.logger.info(
-      'OnReady',
-      `
-      ------------------------------
-      |  Online como: ${discriminator ? `${client.user.username}#${discriminator}` : `${client.user.username}`};
-      |  Operando em: ${client.guilds.cache.size} servidores.
-      |  Online para: ${client.users.cache.size} Usuários.
-      ------------------------------
-      |  SERVIDORES ONDE EU ESTOU:
-      |  ${client.guilds.cache.map(guild => guild.name).join('\n      |  ')}
-      ------------------------------
-    `
-    );
-    await client.database.initialize(client);
-  }
-}
-
 module.exports = async (client, token) => {
-  const onReadyModule = new OnReadyModule();
+  const logger = new Logger();
 
-  client.on('ready', async () => {
-    await onReadyModule.handleReady(client);
-  });
+  try {
+    const discriminator = client.user.discriminator;
+    const message = `
+╔════════════════════════════════════════════════════════════╗
+║                     🤖 BOT INICIADO                        ║
+╠════════════════════════════════════════════════════════════╣
+║ 📝 Informações do Bot:                                     ║
+║    • Nome: ${discriminator ? `${client.user.username}#${discriminator}` : `${client.user.username}`}
+║    • ID: ${client.user.id}
+║    • Servidores: ${client.guilds.cache.size}
+║    • Usuários: ${client.users.cache.size}
+╠════════════════════════════════════════════════════════════╣
+║ 🏢 Servidores Conectados:                                  ║
+║    ${client.guilds.cache.map(guild => `• ${guild.name} (${guild.memberCount} membros)`).join('\n    ')}
+╚════════════════════════════════════════════════════════════╝
+    `;
 
-  await client.login(token);
+    await logger.info('OnReady', message);
+
+    await client.database.initialize(client);
+  } catch (error) {
+    console.error('Erro no OnReady:', error);
+    await logger.error('OnReady', `Erro ao inicializar: ${error.message}`);
+  }
 };

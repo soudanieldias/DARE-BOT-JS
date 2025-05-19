@@ -28,6 +28,14 @@ class AudioFileService {
 
       for (const pattern of categories) {
         const audioFiles = globSync(pattern);
+        await this.logger.info(
+          'AudioFileService',
+          `Procurando arquivos em: ${pattern}`
+        );
+        await this.logger.info(
+          'AudioFileService',
+          `Encontrados ${audioFiles.length} arquivos`
+        );
 
         for (const file of audioFiles) {
           const fileName = path.basename(file, '.mp3');
@@ -39,6 +47,10 @@ class AudioFileService {
               path: file,
               category: category,
             });
+            await this.logger.info(
+              'AudioFileService',
+              `Arquivo carregado: ${fileName} (${category})`
+            );
           } else {
             await this.logger.warn(
               'AudioFileService',
